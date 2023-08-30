@@ -1,21 +1,18 @@
-vCard - Personal Portfolio
+Personal Portfolio
 
 # sidebar
 
-alt = Richard hanrick
-Richard hanrick
-Web developer
+alt = Marco Mialaret
+Marco Mialaret
+Educator & Data Scientist
 
 Show Contacts
 
 Email
 richard@example.com
 
-Phone
-+1 (213) 352-2795
-
 Birthday
-June 23, 1982
+Octuber 28, 1985
 
 Location
 Sacramento, California, USA

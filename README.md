@@ -13,14 +13,21 @@ A single-page site covering background, professional experience, education, publ
 Plain HTML, CSS and JavaScript — no build step, no framework, no dependencies. Fonts are loaded from Google Fonts (Fraunces, Inter, IBM Plex Mono); icons are hand-written inline SVG.
 
 ```
-index.html
+index.html        home page (English)
+pt.html           home page (Portuguese)
 assets/
   css/style.css   design tokens, layout, light/dark theme
-  js/script.js    theme toggle, mobile nav, scroll-spy, reveal-on-scroll
-  images/         favicon and portrait
+  js/script.js    theme toggle, language switch, mobile nav, scroll-spy, reveal-on-scroll
+  images/         favicon, portrait and study previews
+studies/          study guides, linked from the Studies section
+  index.html      sandpile guide (Portuguese)
+  en.html         sandpile guide (English)
+  estilo.css      guide-only styles, layered on top of assets/css/style.css
+  fonte/          templates and generator (gerar.py) for the guide pages
 ```
 
 Features:
+- English and Portuguese versions, with an EN | PT switch in the top bar on every page
 - Light/dark theme, following the OS preference by default and toggleable (persisted in `localStorage`)
 - Responsive layout with a mobile nav
 - Scroll-spy navigation and scroll-reveal animations

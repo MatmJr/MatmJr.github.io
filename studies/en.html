@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The sandpile — Marco Mialaret Júnior</title>
+<link rel="alternate" hreflang="pt-BR" href="index.html">
+<link rel="shortcut icon" href="../assets/images/logo.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a href="../index.html" class="brand">Marco Mialaret<span class="dot">.</span></a>
+
+    <nav class="nav-links" data-nav-links>
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#resume">Resume</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="../index.html#projects">Projects</a>
+      <a href="../index.html#studies" class="active">Studies</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+
+    <div class="topbar-actions">
+      <nav class="lang-switch" aria-label="Language">
+        <a href="en.html" lang="en" aria-current="page">EN</a>
+        <a href="index.html" lang="pt" hreflang="pt">PT</a>
+      </nav>
+      <button class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<header class="abertura">
+  <div class="envoltorio">
+    <div>
+      <p class="rotulo">Self-organized criticality in Python</p>
+      <h1>The sandpile</h1>
+      <p class="lede">Grains fall one by one onto a board. When a cell collects four, it collapses and passes one grain to each neighbour, which may collapse too.</p>
+      <p>Over time the system tunes itself into a state where a single grain can do nothing at all or bring down half the board. This guide explains the theory behind that and builds, step by step, an animation that pauses when the risk of a catastrophic avalanche gets high and shows where it could start.</p>
+      <nav class="indice-rapido" aria-label="Parts of the guide">
+        <a href="#teoria">Part I · Theory</a>
+        <a href="#construcao">Part II · Building the code</a>
+        <a href="#explorar">Part III · Explore</a>
+      </nav>
+    </div>
+
+    <div class="demo" aria-labelledby="demo-titulo">
+      <div class="demo-topo">
+        <h2 id="demo-titulo">Try it</h2>
+        <span class="rotulo">20 × 20 · already critical</span>
+      </div>
+      <canvas id="tela" tabindex="0" aria-label="Sandpile board. Click a cell to drop a grain on it."></canvas>
+      <p class="aviso-alerta" id="aviso" hidden></p>
+      <div class="controles">
+        <button type="button" class="botao primario" id="b-auto">Start</button>
+        <button type="button" class="botao" id="b-grao">Drop one grain</button>
+        <button type="button" class="botao" id="b-fim">Finish avalanche</button>
+      </div>
+      <div class="ajustes">
+        <label><input type="checkbox" id="c-monitor" checked> Risk monitor</label>
+        <label>Catastrophe ≥ <input type="number" id="c-limiar" min="10" max="2000" step="10" value="240"> topplings</label>
+        <label>Alert ≥ <input type="number" id="c-alerta" min="1" max="50" step="1" value="5"> %</label>
+        <label>Speed
+          <select id="c-vel">
+            <option value="400">slow</option>
+            <option value="160" selected>medium</option>
+            <option value="60">fast</option>
+          </select>
+        </label>
+      </div>
+      <dl class="estado" aria-live="polite">
+        <dt>grains</dt><dd id="e-graos">0</dd>
+        <dt>density</dt><dd id="e-dens">0</dd>
+        <dt>avalanche</dt><dd id="e-aval">none yet</dd>
+        <dt>risk</dt><dd id="e-risco">off</dd>
+      </dl>
+      <div class="legenda">
+        <span><i style="background:#f7f1e3"></i>0</span>
+        <span><i style="background:#e8c872"></i>1</span>
+        <span><i style="background:#c9963b"></i>2</span>
+        <span><i style="background:#7a5320"></i>3 grains</span>
+        <span><i style="background:rgba(38,89,242,.75)"></i>danger zone</span>
+        <span><i style="background:rgba(217,26,26,.9)"></i>toppling now</span>
+        <span><i style="background:rgba(217,26,26,.35)"></i>already toppled</span>
+      </div>
+      <p class="dica">Click a cell to drop a grain there. Try a blue one. With <strong>Start</strong>, grains fall on their own and the animation pauses when an alert begins.</p>
+    </div>
+  </div>
+</header>
+
+<div class="envoltorio corpo">
+  <nav class="sumario" aria-label="Contents">
+    <details id="sumario-detalhes" open>
+      <summary class="rotulo">Contents</summary>
+      <ol>
+        <li><a href="#teoria"><b>Part I · Theory</b></a></li>
+        <li><a href="#soc">1. Self-organized criticality</a></li>
+        <li><a href="#modelo">2. The formal model</a></li>
+        <li><a href="#avalanches">3. Measuring avalanches</a></li>
+        <li><a href="#estado-critico">4. The critical state</a></li>
+        <li><a href="#abeliana">5. The abelian property</a></li>
+        <li><a href="#caos">6. Critical is not chaotic</a></li>
+        <li><a href="#risco">7. The risk of catastrophe</a></li>
+      </ol>
+      <ol>
+        <li><a href="#construcao"><b>Part II · Building</b></a></li>
+        <li><a href="#arquitetura">Architecture</a></li>
+        <li><a href="#glossario">Glossary of the code</a></li>
+        <li><a href="#passo-0">Step 0 · Setup</a></li>
+        <li><a href="#passo-1">Step 1 · Board</a></li>
+        <li><a href="#passo-2">Step 2 · Drawing</a></li>
+        <li><a href="#passo-3">Step 3 · Rule</a></li>
+        <li><a href="#passo-4">Step 4 · Simulation</a></li>
+        <li><a href="#passo-5">Step 5 · Clusters</a></li>
+        <li><a href="#passo-6">Step 6 · Risk monitor</a></li>
+        <li><a href="#passo-7">Step 7 · Playback</a></li>
+        <li><a href="#passo-8">Step 8 · Animation</a></li>
+        <li><a href="#passo-9">Step 9 · Putting it together</a></li>
+      </ol>
+      <ol>
+        <li><a href="#explorar"><b>Part III · Explore</b></a></li>
+        <li><a href="#referencias">References</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <article>
+    <!-- ============================== PART I ============================== -->
+    <div class="parte" id="teoria">
+      <p class="rotulo">Part I</p>
+      <h2>Theory</h2>
+      <p>What self-organized criticality is, how the model is defined, and what can be measured and predicted in it. The figures quoted here were measured with this guide's own code.</p>
+    </div>
+
+    <section id="soc">
+      <h2 class="titulo"><span class="num">1</span>Self-organized criticality</h2>
+      <p>Earthquakes, forest fires, snow avalanches, mass extinctions and bursts of activity in the brain have something in common: they produce events of every size. There are many small ones, some medium ones and, every now and then, a giant one. There is no typical size. When you count how many events of each size <var>s</var> happened, the result follows a <strong>power law</strong>:</p>
+      <div class="formula"><var>N</var>(<var>s</var>) ∝ <var>s</var><sup>−<var>τ</var></sup><small>On a log-log plot this is a straight line with slope −τ. The Gutenberg–Richter law for earthquakes is of this kind.</small></div>
+      <p>In physics, power laws show up at the <strong>critical points</strong> of phase transitions, such as water at its critical point or a magnet at the Curie temperature. There, however, someone has to tune the temperature precisely. Nobody tunes anything in nature, and yet power laws are everywhere.</p>
+      <p>In 1987, Per Bak, Chao Tang and Kurt Wiesenfeld proposed an explanation: some systems reach the critical point on their own and stay there. They called this <strong>self-organized criticality</strong> (SOC). The example they used is the one in this guide, a sandpile. Four ingredients appear in every system of this kind:</p>
+      <ul class="ingredientes">
+        <li><strong>Slow driving</strong>Energy comes in gradually, one grain at a time.</li>
+        <li><strong>Local threshold</strong>Nothing happens until a cell goes over a limit.</li>
+        <li><strong>Fast relaxation</strong>A cell over the limit discharges into its neighbours, and the avalanche ends before the next grain.</li>
+        <li><strong>Dissipation</strong>Something leaves the system. Here, the grains that fall off the edge. Without that, the pile would grow forever.</li>
+      </ul>
+    </section>
+
+    <section id="modelo">
+      <h2 class="titulo"><span class="num">2</span>The Bak–Tang–Wiesenfeld model</h2>
+      <p>Take a square <var>L</var> × <var>L</var> lattice. Each site <var>x</var> = (<var>i</var>, <var>j</var>) holds an integer <var>z</var>(<var>x</var>) ≥ 0, its height, which is the number of grains. The neighbours of <var>x</var> are the four sites above, below, left and right. The critical threshold is <var>z</var><sub>c</sub> = 4, the number of neighbours. The dynamics has three rules:</p>
+      <ol>
+        <li><strong>Driving.</strong> Pick <var>x</var> with uniform probability 1/<var>L</var>² and set <var>z</var>(<var>x</var>) ← <var>z</var>(<var>x</var>) + 1.</li>
+        <li><strong>Toppling.</strong> If some site <var>y</var> has <var>z</var>(<var>y</var>) ≥ <var>z</var><sub>c</sub>, it topples: <var>z</var>(<var>y</var>) ← <var>z</var>(<var>y</var>) − 4, and every neighbour <var>w</var> inside the lattice gets one grain, <var>z</var>(<var>w</var>) ← <var>z</var>(<var>w</var>) + 1. A grain headed for a neighbour outside the lattice is lost.</li>
+        <li><strong>Relaxation.</strong> Repeat rule 2 until no site has <var>z</var> ≥ <var>z</var><sub>c</sub>. Only then go back to rule 1.</li>
+      </ol>
+      <p>Rule 3 is the <strong>separation of time scales</strong>: driving is infinitely slow compared with an avalanche. A board with no unstable sites is called <strong>stable</strong>, and every height in it is 0, 1, 2 or 3.</p>
+      <p>In matrix notation, toppling <var>y</var> means subtracting a column of the matrix <var>Δ</var>:</p>
+      <div class="formula"><var>z</var> ← <var>z</var> − <var>Δ</var> <var>e</var><sub><var>y</var></sub>, &nbsp; with <var>Δ</var><sub><var>yy</var></sub> = 4 &nbsp;and&nbsp; <var>Δ</var><sub><var>yw</var></sub> = −1 for each neighbour <var>w</var><small><var>Δ</var> is the discrete Laplacian of the lattice, and <var>e</var><sub><var>y</var></sub> is the vector with 1 at <var>y</var> and 0 elsewhere.</small></div>
+      <p>In the bulk, a toppling conserves grains: the cell loses 4 and its neighbours gain 4. Only at the edge does the total go down. That dissipation is what lets the system settle into an equilibrium.</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>In the model</th><th>In the code</th></tr></thead>
+          <tbody>
+            <tr><td><var>L</var> × <var>L</var> lattice with heights <var>z</var>(<var>x</var>)</td><td><code>Tabuleiro(n)</code></td></tr>
+            <tr><td>threshold <var>z</var><sub>c</sub> = 4</td><td><code>regra.critico</code>, equal to <code>len(vizinhos)</code></td></tr>
+            <tr><td>pick <var>x</var> and add 1</td><td><code>Sorteador.escolher</code> and <code>Simulacao.soltar_grao</code></td></tr>
+            <tr><td>topple <var>y</var></td><td><code>RegraBTW.tombar(tabuleiro, y)</code></td></tr>
+            <tr><td>relax until stable</td><td><code>RegraBTW.ondas(tabuleiro)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="avalanches">
+      <h2 class="titulo"><span class="num">3</span>Avalanches: size, area and duration</h2>
+      <p>The chain of topplings set off by one grain is an <strong>avalanche</strong>. Three measures describe each one:</p>
+      <dl class="medidas">
+        <dt>Size <var>s</var></dt><dd>Total number of topplings. A cell can topple more than once in the same avalanche.</dd>
+        <dt>Area <var>a</var></dt><dd>Number of distinct cells that toppled. Always <var>a</var> ≤ <var>s</var>.</dd>
+        <dt>Duration <var>T</var></dt><dd>Number of waves. In a wave, every unstable cell topples at the same time. Cells made unstable by them topple in the next wave.</dd>
+      </dl>
+      <p>The animation shows each avalanche wave by wave: bright red for cells toppling now and light red for cells that have already toppled.</p>
+    </section>
+
+    <section id="estado-critico">
+      <h2 class="titulo"><span class="num">4</span>The critical state</h2>
+      <p>Starting from an empty board, almost no grains leave through the edge. The mean density ⟨<var>z</var>⟩ climbs in a straight line and avalanches are small. This is the <strong>transient</strong>. Then the density stops climbing and starts to fluctuate around a plateau. From then on the system is in the <strong>critical state</strong> and stays there, without anyone tuning anything. On a 30 × 30 board, over 50,000 grains, we measured:</p>
+      <div class="ficha">
+        <div><b>~2,100</b><span>grains until the end of the transient</span></div>
+        <div><b>2.08</b><span>grains per cell on the plateau (infinite lattice: ≈ 2.125)</span></div>
+        <div><b>42.5%</b><span>of grains set off some avalanche</span></div>
+        <div><b>84.5</b><span>topplings per avalanche, on average</span></div>
+      </div>
+      <p>The first giant avalanche usually shows up right near the end of the transient, between grains 1,900 and 2,100: that is when the system reaches the critical state. After that, the size distribution follows a power law up to a cutoff:</p>
+      <div class="formula"><var>P</var>(<var>s</var>) ∼ <var>s</var><sup>−<var>τ</var></sup>, &nbsp; for 1 ≪ <var>s</var> ≪ <var>s</var><sub>c</sub>(<var>L</var>)</div>
+      <p>The cutoff <var>s</var><sub>c</sub> grows with the board size <var>L</var>. Comparing <var>L</var> = 16, 32 and 64 and watching the cutoff move is the classic way to confirm criticality (<em>finite-size scaling</em>). On the 30 × 30 board we measured <var>τ</var> ≈ 1.05 to 1.07. On large lattices, estimates for the 2D BTW model fall around 1.1 to 1.3, and the exact value is still debated. Small boards tend to underestimate the exponent.</p>
+      <p>When building the histogram, use logarithmic bins. With linear bins the tail gets very few events per bin and turns into noise.</p>
+    </section>
+
+    <section id="abeliana">
+      <h2 class="titulo"><span class="num">5</span>The abelian property</h2>
+      <p>In 1990, Deepak Dhar showed that the BTW model has a strong property: <strong>the final state does not depend on the order in which unstable cells topple</strong>. Neither does the number of times each cell topples. Writing <var>a</var><sub><var>x</var></sub> for the operation "add a grain at <var>x</var> and relax", we have</p>
+      <div class="formula"><var>a</var><sub><var>x</var></sub> <var>a</var><sub><var>y</var></sub> = <var>a</var><sub><var>y</var></sub> <var>a</var><sub><var>x</var></sub><small>That is why the model is also called the abelian sandpile.</small></div>
+      <p>The intuition is simple. Toppling a cell only adds grains to its neighbours, and that never prevents another unstable cell from toppling. Any valid order ends up in the same place.</p>
+      <div class="nocodigo">
+        <p class="rotulo">In the code</p>
+        <p>Two parts of the project rely on this. <code>RegraBTW.ondas</code> topples all unstable cells together, in waves; we compared it with the sequential version over 8,000 grains and the final states and sizes were identical. The risk monitor reuses the shared part of the avalanches of a whole cluster (<a href="#risco">section 7</a>).</p>
+      </div>
+    </section>
+
+    <section id="caos">
+      <h2 class="titulo"><span class="num">6</span>Critical is not chaotic</h2>
+      <p>It is tempting to call the avalanche chaotic, but the technical term does not apply. In a chaotic system, a tiny difference grows exponentially until it takes over everything: the butterfly effect. The sandpile is deterministic, given the board and where the grain lands, but a small difference does not get amplified.</p>
+      <p>To test this, we took two identical 30 × 30 boards, except for one extra grain in one cell, and dropped the same sequence of 20,000 grains on both:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Grains later</th><th class="n">Test 1</th><th class="n">Test 2</th><th class="n">Test 3</th></tr></thead>
+          <tbody>
+            <tr><td>100</td><td class="n">143</td><td class="n">1</td><td class="n">1</td></tr>
+            <tr><td>1,000</td><td class="n">181</td><td class="n">17</td><td class="n">76</td></tr>
+            <tr><td>5,000</td><td class="n">10</td><td class="n">27</td><td class="n">122</td></tr>
+            <tr><td>20,000</td><td class="n">41</td><td class="n">206</td><td class="n">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tabela-legenda">Cells that differ, out of 900, between the two boards.</p>
+      <p>The difference goes up and down, and in test 3 it shrinks back to a single cell. For about 90% of the grains, the avalanche had exactly the same size on both boards.</p>
+      <p>What does exist is <strong>sensitivity to the trigger point</strong>: in 119 of 870 pairs of neighbouring cells, a grain on one causes at most 5 topplings and on the other at least 100. The board sits at the threshold, full of regions about to collapse, and the unpredictability comes from that structure combined with the random grain.</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th></th><th>Chaos</th><th>Self-organized criticality</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Small perturbation</strong></td><td>always grows exponentially</td><td>sometimes does nothing, sometimes changes one event, but never takes over the system</td></tr>
+            <tr><td><strong>Typical statistics</strong></td><td>a characteristic scale</td><td>power law: events of every size</td></tr>
+            <tr><td><strong>Origin</strong></td><td>nonlinear internal dynamics</td><td>slow driving of a system with a threshold and dissipation</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="risco">
+      <h2 class="titulo"><span class="num">7</span>Can it be predicted? The risk of catastrophe</h2>
+      <p>Pick a size <var>s</var>* from which an avalanche counts as a catastrophe. For a stable board <var>z</var>, let <var>s</var><sub><var>x</var></sub>(<var>z</var>) be the size of the avalanche that would happen if the next grain landed on <var>x</var>. Since the dynamics is deterministic, this number can be computed in advance by simulating on a hypothetical board. The <strong>danger zone</strong> and the <strong>risk</strong> are:</p>
+      <div class="formula"><var>Z</var>(<var>z</var>) = { <var>x</var> : <var>s</var><sub><var>x</var></sub>(<var>z</var>) ≥ <var>s</var>* } &nbsp;&nbsp;&nbsp; <var>R</var>(<var>z</var>) = |<var>Z</var>(<var>z</var>)| / <var>L</var>²</div>
+      <p>With uniform drops, <var>R</var>(<var>z</var>) is exactly the probability that the next grain causes a catastrophe. The animation computes <var>R</var> before every grain, paints <var>Z</var> blue and pauses when <var>R</var> goes over a limit.</p>
+
+      <h3>The cluster lemma</h3>
+      <p>Call a <strong>cluster</strong> a connected set <var>C</var> of cells with <var>z</var> = 3, that is, one grain away from toppling. If the grain lands on <var>c</var> ∈ <var>C</var>, <strong>every cell of <var>C</var> topples at least once</strong>.</p>
+      <p>The proof is short. Cell <var>c</var> reaches 4 and topples. Each neighbour of <var>c</var> that belongs to <var>C</var> gets a grain, reaches 4 and topples as well. Repeating the argument along any path inside <var>C</var>, they all topple.</p>
+
+      <h3>The shortcut</h3>
+      <p>Thanks to the abelian property, you can topple the whole of <var>C</var> first and only then carry on. For any <var>c</var> ∈ <var>C</var>:</p>
+      <div class="formula"><var>s</var><sub><var>c</var></sub> = |<var>C</var>| + <var>S</var><sub><var>C</var></sub> + <var>r</var><sub><var>c</var></sub></div>
+      <p><var>S</var><sub><var>C</var></sub> is the number of topplings needed to stabilize the board after toppling <var>C</var> once. It is the same for every cell of <var>C</var>. Only <var>r</var><sub><var>c</var></sub>, what the extra grain still causes at the end, depends on <var>c</var>, and it is usually small. So one large simulation per cluster is enough, instead of one per cell. On the 30 × 30 board, an evaluation went from 83 ms to 19 ms with identical results, checked on 27,000 cells.</p>
+
+      <h3>Does the forecast work?</h3>
+      <p>We ran 12,000 grains on a 30 × 30 board, with a catastrophe defined as an avalanche of at least 550 topplings (about 1% of avalanches) and the alert at <var>R</var> ≥ 5%:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Forecast chance</th><th class="n">Grains</th><th class="n">Forecast (mean)</th><th class="n">Happened</th></tr></thead>
+          <tbody>
+            <tr><td>0%</td><td class="n">6,366</td><td class="n">0%</td><td class="n">0%</td></tr>
+            <tr><td>up to 2%</td><td class="n">1,236</td><td class="n">1.04%</td><td class="n">1.29%</td></tr>
+            <tr><td>2% to 5%</td><td class="n">1,175</td><td class="n">3.28%</td><td class="n">3.06%</td></tr>
+            <tr class="destaque"><td>above 5% (alert)</td><td class="n">723</td><td class="n">7.15%</td><td class="n">7.61%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The forecast chance matches the observed frequency. More than half of the catastrophes (55 of 107) happened with the alert on, and none happened when the forecast chance was zero. Even with the alert on, though, about 92% of grains land outside the blue zone. It is a risk forecast, like seismic hazard maps: it tells you where and how likely, but not when.</p>
+    </section>
+
+    <!-- ============================== PART II ============================== -->
+    <div class="parte" id="construcao">
+      <p class="rotulo">Part II</p>
+      <h2>Building the code</h2>
+      <p>Nine steps, in dependency order: each piece only uses the ones that came before. Every step ends with a snippet to check that everything works; the output shown is real, produced by the code itself.</p>
+    </div>
+
+    <section id="arquitetura">
+      <h2 class="titulo">Architecture</h2>
+      <p>The code lives in a package called <code>sandpile</code>, with one module per responsibility. <code>main.py</code> only wires the pieces together.</p>
+<pre class="arvore">SOC/
+├── main.py               <b>Step 9</b>  wires the pieces and opens the animation
+└── sandpile/
+    ├── __init__.py       <b>Step 0</b>  empty until Step 9
+    ├── board.py          <b>Step 1</b>  grid state and the hypothetical board
+    ├── sampling.py       <b>Step 2</b>  where the grain lands
+    ├── rules.py          <b>Step 3</b>  how cells topple
+    ├── simulation.py     <b>Step 4</b>  one simulation step
+    ├── indicators.py     <b>Step 5</b>  clusters of critical cells
+    ├── risk.py           <b>Step 6</b>  risk map and danger zone
+    ├── playback.py       <b>Step 7</b>  animation pace and alerts
+    └── visualization.py  <b>Step 8</b>  drawing and keyboard</pre>
+      <p>The dependencies form layers. Whatever is on top uses what is below, never the other way round:</p>
+      <div class="camadas" role="img" aria-label="Layers: main.py uses AnimacaoPilha, which uses ReproducaoEmOndas, which uses Simulacao and MonitorDeRisco, which use Sorteador, RegraTombamento and Tabuleiro.">
+        <div class="camada"><div class="peca"><code>main.py</code><span>creates and injects the pieces</span></div></div>
+        <div class="seta">uses ↓</div>
+        <div class="camada"><div class="peca"><code>AnimacaoPilha</code><span>draws and handles the keyboard</span></div></div>
+        <div class="seta">uses ↓</div>
+        <div class="camada"><div class="peca"><code>ReproducaoEmOndas</code><span>sets the pace and raises alerts</span></div></div>
+        <div class="seta">uses ↓</div>
+        <div class="camada">
+          <div class="peca"><code>Simulacao</code><span>drops grains and relaxes</span></div>
+          <div class="peca"><code>MonitorDeRisco</code><span>computes the danger zone</span></div>
+        </div>
+        <div class="seta">uses ↓</div>
+        <div class="camada">
+          <div class="peca base"><code>Sorteador</code><span>abstraction</span></div>
+          <div class="peca base"><code>RegraTombamento</code><span>abstraction</span></div>
+          <div class="peca"><code>Tabuleiro</code><span>state</span></div>
+        </div>
+      </div>
+      <h3>Where each SOLID principle comes in</h3>
+      <div class="solid">
+        <b>S</b><p><strong>Single responsibility.</strong> Each class has one reason to change: the board stores state, the rule topples, the playback sets the pace, the animation draws.</p>
+        <b>O</b><p><strong>Open/closed.</strong> New behaviour comes in as a new class, such as <code>RegraBTW(VIZINHANCA_8)</code> or <code>SorteioCentro()</code>, without editing <code>Simulacao</code>.</p>
+        <b>L</b><p><strong>Liskov substitution.</strong> <code>TabuleiroHipotetico</code> can stand in for <code>Tabuleiro</code> anywhere. The rule runs on it without knowing it is a hypothesis, and that is how the monitor simulates "what if the grain lands here?".</p>
+        <b>I</b><p><strong>Interface segregation.</strong> Interfaces are small: <code>Sorteador</code> only has <code>escolher</code>; <code>RegraTombamento</code> has <code>tombar</code> and <code>ondas</code>.</p>
+        <b>D</b><p><strong>Dependency inversion.</strong> <code>Simulacao</code> and <code>MonitorDeRisco</code> depend on the abstractions. The concrete pieces are created in <code>main.py</code> and passed in through the constructor.</p>
+      </div>
+    </section>
+
+    <section id="glossario">
+      <h2 class="titulo">Glossary of the code</h2>
+      <p>The project's code is written in Portuguese. On this page the package and its files have English names, but the code blocks are otherwise the real files, so classes, functions and variables stay in Portuguese; this table maps the ones you will meet most often.</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>In the code</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>Tabuleiro</code>, <code>TabuleiroHipotetico</code></td><td>board, hypothetical board</td></tr>
+            <tr><td><code>Posicao</code>, <code>posicoes</code></td><td>position, positions</td></tr>
+            <tr><td><code>adicionar</code>, <code>contem</code>, <code>como_matriz</code></td><td>add, contains, as matrix</td></tr>
+            <tr><td><code>Sorteador</code>, <code>SorteioUniforme</code>, <code>SorteioCentro</code>, <code>escolher</code></td><td>drawer (picks where the grain lands), uniform draw, centre draw, choose</td></tr>
+            <tr><td><code>RegraTombamento</code>, <code>tombar</code>, <code>critico</code></td><td>toppling rule, topple, critical threshold</td></tr>
+            <tr><td><code>vizinhos</code>, <code>VIZINHANCA_4</code></td><td>neighbours, 4-cell neighbourhood</td></tr>
+            <tr><td><code>ondas</code>, <code>onda</code>, <code>candidatas</code>, <code>tocadas</code></td><td>waves, wave, candidates, touched</td></tr>
+            <tr><td><code>Simulacao</code>, <code>soltar_grao</code>, <code>passo</code>, <code>grao</code></td><td>simulation, drop grain, step, grain</td></tr>
+            <tr><td><code>tamanho</code>, <code>area</code>, <code>duracao</code>, <code>origem</code>, <code>tombamentos</code></td><td>size, area, duration, origin, topplings</td></tr>
+            <tr><td><code>aglomerados</code>, <code>densidade</code></td><td>clusters, density</td></tr>
+            <tr><td><code>MonitorDeRisco</code>, <code>Risco</code>, <code>avaliar</code>, <code>zona</code>, <code>alerta</code></td><td>risk monitor, risk, evaluate, zone, alert</td></tr>
+            <tr><td><code>tamanho_se_cair</code>, <code>tamanho_catastrofico</code>, <code>chance_alerta</code></td><td>size if it lands (here), catastrophic size, alert chance</td></tr>
+            <tr><td><code>ReproducaoEmOndas</code>, <code>avancar</code>, <code>graos_por_quadro</code></td><td>wave-by-wave playback, advance, grains per frame</td></tr>
+            <tr><td><code>AnimacaoPilha</code>, <code>desenhar</code>, <code>mostrar</code>, <code>tecla</code></td><td>pile animation, draw, show, key</td></tr>
+            <tr><td>messages printed by the checks</td><td>also in Portuguese: "lema confirmado" is "lemma confirmed", "chance de catástrofe" is "chance of catastrophe", "primeiro alerta antes do grão" is "first alert before grain"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="passo-0">
+      <h2 class="titulo"><span class="num">Step 0</span>Setup</h2>
+      <ul>
+        <li>Python 3.10 or newer. The code uses annotations such as <code>int | None</code> and <code>list[int]</code>.</li>
+        <li>Install matplotlib, which brings numpy along: <code>pip install matplotlib</code>.</li>
+        <li>Create the folder <code>SOC/sandpile/</code> with an <strong>empty</strong> <code>__init__.py</code> file. It marks the folder as a package. It only gets content in Step 9; if you fill it in earlier, the checks in the intermediate steps will fail, because it would try to import files that do not exist yet.</li>
+        <li>To run the "Check" snippets, save each one to a file, for example <code>check.py</code>, in the <code>SOC</code> folder, and run <code>python check.py</code>.</li>
+      </ul>
+    </section>
+
+    <section id="passo-1">
+      <h2 class="titulo"><span class="num">Step 1</span>The board</h2>
+      <p>The <var>L</var> × <var>L</var> lattice from the <a href="#modelo">model</a>. <code>Tabuleiro</code> only stores how many grains are in each cell and knows nothing about drops or avalanches.</p>
+      <ul>
+        <li><code>Posicao = tuple[int, int]</code> is just an alias, to keep the annotations readable.</li>
+        <li><code>__getitem__</code> lets you write <code>tabuleiro[(i, j)]</code>.</li>
+        <li><code>adicionar</code> accepts a negative amount. That is how the rule will take 4 grains out of a cell.</li>
+        <li><code>posicoes()</code> is a generator: it walks the cells without building a list.</li>
+        <li><code>como_matriz()</code> returns a copy, so whoever draws cannot change the state by accident.</li>
+      </ul>
+      <p><code>TabuleiroHipotetico</code> is the piece that makes the risk monitor feasible. It reads from the original board and keeps only the differences in a dictionary. Simulating an avalanche on it costs in proportion to the avalanche, not to the board, and the original does not change. It overrides <code>total</code> and <code>como_matriz</code> so that it keeps behaving like a real <code>Tabuleiro</code> (the L in SOLID).</p>
+      <figure class="codigo"><figcaption><span>sandpile/board.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from typing import Iterator
+
+Posicao = tuple[int, int]
+
+
+class Tabuleiro:
+    &quot;&quot;&quot;Grade N x N que guarda quantos grãos há em cada célula.
+
+    Só cuida do estado; não sabe nada sobre sorteio nem sobre avalanches.
+    &quot;&quot;&quot;
+
+    def __init__(self, n: int):
+        self.n = n
+        self._celulas = [[0] * n for _ in range(n)]
+
+    def __getitem__(self, pos: Posicao) -&gt; int:
+        i, j = pos
+        return self._celulas[i][j]
+
+    def adicionar(self, pos: Posicao, quantidade: int = 1) -&gt; None:
+        i, j = pos
+        self._celulas[i][j] += quantidade
+
+    def contem(self, pos: Posicao) -&gt; bool:
+        i, j = pos
+        return 0 &lt;= i &lt; self.n and 0 &lt;= j &lt; self.n
+
+    def posicoes(self) -&gt; Iterator[Posicao]:
+        for i in range(self.n):
+            for j in range(self.n):
+                yield i, j
+
+    def total(self) -&gt; int:
+        return sum(map(sum, self._celulas))
+
+    def como_matriz(self) -&gt; list[list[int]]:
+        &quot;&quot;&quot;Cópia das células, para quem só precisa ler (ex.: desenhar).&quot;&quot;&quot;
+        return [linha[:] for linha in self._celulas]
+
+
+class TabuleiroHipotetico(Tabuleiro):
+    &quot;&quot;&quot;Um &quot;e se...?&quot; sobre outro tabuleiro.
+
+    Lê do tabuleiro original e guarda as alterações à parte, então dá para
+    simular uma avalanche sem mexer no original nem copiá-lo inteiro.
+    &quot;&quot;&quot;
+
+    def __init__(self, base: Tabuleiro):
+        self.n = base.n
+        self._base = base
+        self._extra: dict[Posicao, int] = {}
+
+    def __getitem__(self, pos: Posicao) -&gt; int:
+        return self._base[pos] + self._extra.get(pos, 0)
+
+    def adicionar(self, pos: Posicao, quantidade: int = 1) -&gt; None:
+        self._extra[pos] = self._extra.get(pos, 0) + quantidade
+
+    def total(self) -&gt; int:
+        return self._base.total() + sum(self._extra.values())
+
+    def como_matriz(self) -&gt; list[list[int]]:
+        return [[self[(i, j)] for j in range(self.n)] for i in range(self.n)]</code></pre></figure>
+      <p><strong>Check:</strong></p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from sandpile.board import Tabuleiro, TabuleiroHipotetico
+
+t = Tabuleiro(3)
+t.adicionar((1, 1), 2)
+print(t[(1, 1)], t.total(), t.contem((3, 0)))
+
+h = TabuleiroHipotetico(t)
+h.adicionar((1, 1))
+print(h[(1, 1)], t[(1, 1)])  # o original não mudou</code></pre><div class="saida"><span class="rotulo">output</span><pre>2 2 False
+3 2</pre></div></figure>
+    </section>
+
+    <section id="passo-2">
+      <h2 class="titulo"><span class="num">Step 2</span>Drawing the drop point</h2>
+      <p>Rule 1 of the model, "pick <var>x</var>", becomes an abstraction with a single method. <code>Sorteador</code> inherits from <code>ABC</code> and marks <code>escolher</code> with <code>@abstractmethod</code>: Python will not let you create a <code>Sorteador</code> directly, only the concrete classes.</p>
+      <p><code>SorteioUniforme</code> receives the random generator through its constructor. With <code>random.Random(42)</code>, the sequence of grains is always the same, which is essential for reproducing an experiment. <code>SorteioCentro</code> drops everything in the middle and produces the classic sandpile fractal.</p>
+      <figure class="codigo"><figcaption><span>sandpile/sampling.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import random
+from abc import ABC, abstractmethod
+
+from .board import Posicao, Tabuleiro
+
+
+class Sorteador(ABC):
+    &quot;&quot;&quot;Decide onde o próximo grão cai.&quot;&quot;&quot;
+
+    @abstractmethod
+    def escolher(self, tabuleiro: Tabuleiro) -&gt; Posicao: ...
+
+
+class SorteioUniforme(Sorteador):
+    &quot;&quot;&quot;Qualquer célula com a mesma probabilidade.&quot;&quot;&quot;
+
+    def __init__(self, rng: random.Random | None = None):
+        self._rng = rng or random.Random()
+
+    def escolher(self, tabuleiro: Tabuleiro) -&gt; Posicao:
+        return self._rng.randrange(tabuleiro.n), self._rng.randrange(tabuleiro.n)
+
+
+class SorteioCentro(Sorteador):
+    &quot;&quot;&quot;Sempre no centro: forma o padrão fractal clássico da pilha de areia.&quot;&quot;&quot;
+
+    def escolher(self, tabuleiro: Tabuleiro) -&gt; Posicao:
+        meio = tabuleiro.n // 2
+        return meio, meio</code></pre></figure>
+      <p><strong>Check:</strong></p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import random
+from sandpile.sampling import SorteioCentro, SorteioUniforme
+from sandpile.board import Tabuleiro
+
+t = Tabuleiro(30)
+a = SorteioUniforme(random.Random(42))
+b = SorteioUniforme(random.Random(42))
+print([a.escolher(t) for _ in range(3)])
+print([b.escolher(t) for _ in range(3)])  # mesma semente, mesmos grãos
+print(SorteioCentro().escolher(t))</code></pre><div class="saida"><span class="rotulo">output</span><pre>[(20, 3), (0, 23), (8, 7)]
+[(20, 3), (0, 23), (8, 7)]
+(15, 15)</pre></div></figure>
+    </section>
+
+    <section id="passo-3">
+      <h2 class="titulo"><span class="num">Step 3</span>The toppling rule</h2>
+      <p>Rules 2 and 3 of the model. The <code>RegraTombamento</code> interface declares two methods, and <code>RegraBTW</code> implements them:</p>
+      <ul>
+        <li><code>tombar(tabuleiro, pos)</code> is rule 2 for one cell: it removes <code>critico</code> grains and gives 1 to each neighbour on the board. It returns the cells that received a grain.</li>
+        <li><code>ondas(tabuleiro, candidatas)</code> is rule 3. It is a <strong>generator</strong>: each <code>yield</code> hands out one wave and pauses the function until someone asks for the next. That is what lets the animation show one wave per frame.</li>
+        <li><code>candidatas</code> says where to look for unstable cells at the start. After a grain is dropped, only the cell where it landed can have become unstable, so there is no need to scan the whole board.</li>
+        <li>Inside the loop, <code>tocadas</code> collects the cells that toppled and the ones that received a grain. Only they can have become unstable for the next wave.</li>
+      </ul>
+      <p>The threshold <code>critico</code> is computed as the number of neighbours. That way no grain is created or destroyed in the bulk, as the <a href="#modelo">model</a> requires.</p>
+      <figure class="codigo"><figcaption><span>sandpile/rules.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from abc import ABC, abstractmethod
+from typing import Iterable, Iterator
+
+from .board import Posicao, Tabuleiro
+
+VIZINHANCA_4 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+VIZINHANCA_8 = VIZINHANCA_4 + [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+
+class RegraTombamento(ABC):
+    &quot;&quot;&quot;Leva o tabuleiro de volta a um estado estável.&quot;&quot;&quot;
+
+    critico: int
+    vizinhos: list[Posicao]
+
+    @abstractmethod
+    def tombar(self, tabuleiro: Tabuleiro, pos: Posicao) -&gt; list[Posicao]:
+        &quot;&quot;&quot;Tomba uma célula uma vez; retorna os vizinhos que receberam grão.&quot;&quot;&quot;
+
+    @abstractmethod
+    def ondas(self, tabuleiro: Tabuleiro,
+              candidatas: Iterable[Posicao] | None = None) -&gt; Iterator[list[Posicao]]:
+        &quot;&quot;&quot;Tomba as células instáveis, uma onda por vez.
+
+        Cada item é a lista de células que tombaram juntas naquela onda; quando
+        ele é entregue, o tabuleiro já está atualizado. Termina quando o
+        tabuleiro fica estável.
+
+        `candidatas` (sem repetição) são as únicas células que podem estar
+        instáveis no início, ex.: onde o grão caiu. Sem elas, verifica todas.
+        &quot;&quot;&quot;
+
+
+class RegraBTW(RegraTombamento):
+    &quot;&quot;&quot;Regra de Bak–Tang–Wiesenfeld.
+
+    Uma célula com &gt;= critico grãos perde critico grãos e passa 1 para cada
+    vizinho. Grãos que saem pela borda são perdidos. O valor crítico é o
+    número de vizinhos, então nenhum grão é criado ou destruído no interior.
+
+    Em cada onda todas as células instáveis tombam juntas. A ordem não muda o
+    estado final (a pilha de areia é &quot;abeliana&quot;), só deixa a propagação visível.
+    &quot;&quot;&quot;
+
+    def __init__(self, vizinhos: list[Posicao] = VIZINHANCA_4):
+        self.vizinhos = vizinhos
+        self.critico = len(vizinhos)
+
+    def tombar(self, tabuleiro: Tabuleiro, pos: Posicao) -&gt; list[Posicao]:
+        tabuleiro.adicionar(pos, -self.critico)
+        i, j = pos
+        receberam = []
+        for di, dj in self.vizinhos:
+            viz = (i + di, j + dj)
+            if tabuleiro.contem(viz):  # fora disso o grão cai do tabuleiro
+                tabuleiro.adicionar(viz)
+                receberam.append(viz)
+        return receberam
+
+    def ondas(self, tabuleiro: Tabuleiro,
+              candidatas: Iterable[Posicao] | None = None) -&gt; Iterator[list[Posicao]]:
+        if candidatas is None:
+            candidatas = tabuleiro.posicoes()
+        instaveis = [p for p in candidatas if tabuleiro[p] &gt;= self.critico]
+
+        while instaveis:
+            tocadas = set(instaveis)
+            for pos in instaveis:
+                tocadas.update(self.tombar(tabuleiro, pos))
+
+            yield instaveis
+            # só quem tombou ou recebeu grão pode ter ficado instável
+            instaveis = [p for p in tocadas if tabuleiro[p] &gt;= self.critico]</code></pre></figure>
+      <p><strong>Check</strong> on a 3 × 3 board: the middle cell is over the limit, and its four neighbours are one grain away from toppling.</p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from sandpile.rules import RegraBTW
+from sandpile.board import Tabuleiro
+
+t = Tabuleiro(3)
+for pos in [(0, 1), (1, 0), (1, 2), (2, 1)]:
+    t.adicionar(pos, 3)
+t.adicionar((1, 1), 4)
+
+for k, onda in enumerate(RegraBTW().ondas(t), 1):
+    print(f&quot;onda {k}: {onda}&quot;)
+print(t.como_matriz())</code></pre><div class="saida"><span class="rotulo">output</span><pre>onda 1: [(1, 1)]
+onda 2: [(0, 1), (1, 2), (2, 1), (1, 0)]
+onda 3: [(1, 1)]
+[[2, 1, 2], [1, 0, 1], [2, 1, 2]]</pre></div></figure>
+      <p>The middle cell topples twice, in wave 1 and wave 3. This avalanche has size 6, area 5 and duration 3, an example of why the area can be smaller than the size.</p>
+    </section>
+
+    <section id="passo-4">
+      <h2 class="titulo"><span class="num">Step 4</span>The simulation</h2>
+      <p><code>Avalanche</code> is a <code>dataclass</code> that stores the origin and the list of waves. The three measures from <a href="#avalanches">section 3</a> become properties: <code>tamanho</code> (size), <code>area</code> and <code>duracao</code> (duration).</p>
+      <p><code>Simulacao</code> receives a ready-made board, drawer and rule through its constructor (the D in SOLID). It offers three operations: <code>soltar_grao</code> (rule 1), <code>ondas</code> (relax gradually, for the animation) and <code>passo</code> (drop and relax in one go).</p>
+      <p>The file also defines <code>Observador</code> (observer), used by the statistical monitoring that writes every event to a CSV file. The animation does not need it, but keeping it does no harm.</p>
+      <figure class="codigo"><figcaption><span>sandpile/simulation.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Iterator
+
+from .rules import RegraTombamento
+from .sampling import Sorteador
+from .board import Posicao, Tabuleiro
+
+
+@dataclass
+class Avalanche:
+    origem: Posicao
+    ondas: list[list[Posicao]]
+
+    @property
+    def tombamentos(self) -&gt; list[Posicao]:
+        return [pos for onda in self.ondas for pos in onda]
+
+    @property
+    def tamanho(self) -&gt; int:
+        &quot;&quot;&quot;Número de tombamentos (uma célula pode tombar mais de uma vez).&quot;&quot;&quot;
+        return len(self.tombamentos)
+
+    @property
+    def area(self) -&gt; set[Posicao]:
+        &quot;&quot;&quot;Células distintas que tombaram.&quot;&quot;&quot;
+        return set(self.tombamentos)
+
+    @property
+    def duracao(self) -&gt; int:
+        &quot;&quot;&quot;Número de ondas.&quot;&quot;&quot;
+        return len(self.ondas)
+
+
+class Observador(ABC):
+    &quot;&quot;&quot;Recebe cada evento da simulação (ex.: para gravar ou acumular estatísticas).&quot;&quot;&quot;
+
+    @abstractmethod
+    def notificar(self, avalanche: Avalanche) -&gt; None: ...
+
+
+class Simulacao:
+    &quot;&quot;&quot;Coordena um passo: sortear posição, adicionar grão, relaxar.
+
+    Recebe as peças prontas (injeção de dependência), então dá para trocar o
+    sorteio ou a regra sem mexer aqui.
+    &quot;&quot;&quot;
+
+    def __init__(self, tabuleiro: Tabuleiro, sorteador: Sorteador, regra: RegraTombamento):
+        self.tabuleiro = tabuleiro
+        self.sorteador = sorteador
+        self.regra = regra
+        self._observadores: list[Observador] = []
+
+    def observar(self, observador: Observador) -&gt; None:
+        self._observadores.append(observador)
+
+    def soltar_grao(self) -&gt; Posicao:
+        pos = self.sorteador.escolher(self.tabuleiro)
+        self.tabuleiro.adicionar(pos)
+        return pos
+
+    def ondas(self, origem: Posicao | None = None) -&gt; Iterator[list[Posicao]]:
+        &quot;&quot;&quot;Relaxa o tabuleiro aos poucos, para quem quer acompanhar onda a onda.
+
+        Com `origem` (onde o último grão caiu), só ela é verificada no início,
+        pois é a única célula que pode ter ficado instável.
+        &quot;&quot;&quot;
+        candidatas = None if origem is None else [origem]
+        return self.regra.ondas(self.tabuleiro, candidatas)
+
+    def passo(self) -&gt; Avalanche:
+        pos = self.soltar_grao()
+        avalanche = Avalanche(pos, list(self.ondas(pos)))
+        for observador in self._observadores:
+            observador.notificar(avalanche)
+        return avalanche</code></pre></figure>
+      <p><strong>Check</strong> conservation: the grains on the board must be exactly the ones dropped minus the ones that fell off the edge.</p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import random
+from sandpile.rules import VIZINHANCA_4, RegraBTW
+from sandpile.simulation import Simulacao
+from sandpile.sampling import SorteioUniforme
+from sandpile.board import Tabuleiro
+
+t = Tabuleiro(20)
+sim = Simulacao(t, SorteioUniforme(random.Random(1)), RegraBTW())
+perdidos = 0
+for _ in range(5000):
+    av = sim.passo()
+    for i, j in av.tombamentos:  # quem tomba na borda perde grãos para fora
+        perdidos += sum(not t.contem((i + di, j + dj)) for di, dj in VIZINHANCA_4)
+
+print(t.total() == 5000 - perdidos, f&quot;densidade {t.total() / 400:.2f}&quot;)
+print(f&quot;última avalanche: tamanho {av.tamanho}, área {len(av.area)}, duração {av.duracao}&quot;)</code></pre><div class="saida"><span class="rotulo">output</span><pre>True densidade 2.05
+última avalanche: tamanho 5, área 5, duração 4</pre></div></figure>
+    </section>
+
+    <section id="passo-5">
+      <h2 class="titulo"><span class="num">Step 5</span>The clusters</h2>
+      <p>The <a href="#risco">cluster lemma</a> needs the connected regions of cells one grain away from toppling. <code>aglomerados</code> does a depth-first search with a stack: it starts from a critical cell that has not been visited yet and keeps adding critical neighbours until there are none left. The other functions in the file (density, fraction of critical cells and largest cluster) are indicators used by the statistical monitoring.</p>
+      <figure class="codigo"><figcaption><span>sandpile/indicators.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">&quot;&quot;&quot;Medidas do estado do tabuleiro que indicam o quão &quot;carregado&quot; ele está.&quot;&quot;&quot;
+
+from .rules import RegraTombamento
+from .board import Posicao, Tabuleiro
+
+
+def densidade(tabuleiro: Tabuleiro) -&gt; float:
+    &quot;&quot;&quot;Grãos por célula.&quot;&quot;&quot;
+    return tabuleiro.total() / tabuleiro.n ** 2
+
+
+def fracao_criticas(tabuleiro: Tabuleiro, regra: RegraTombamento) -&gt; float:
+    &quot;&quot;&quot;Fração de células a um grão de tombar.&quot;&quot;&quot;
+    limiar = regra.critico - 1
+    return sum(tabuleiro[p] &gt;= limiar for p in tabuleiro.posicoes()) / tabuleiro.n ** 2
+
+
+def aglomerados(tabuleiro: Tabuleiro, regra: RegraTombamento) -&gt; list[set[Posicao]]:
+    &quot;&quot;&quot;Regiões conectadas de células a um grão de tombar.
+
+    Um grão em qualquer célula de um aglomerado derruba o aglomerado inteiro:
+    cada célula que tomba empurra suas vizinhas críticas para o valor crítico.
+    &quot;&quot;&quot;
+    limiar = regra.critico - 1
+    vistas = set()
+    encontrados = []
+
+    for inicio in tabuleiro.posicoes():
+        if inicio in vistas or tabuleiro[inicio] &lt; limiar:
+            continue
+        vistas.add(inicio)
+        pilha, aglomerado = [inicio], set()
+        while pilha:
+            pos = pilha.pop()
+            aglomerado.add(pos)
+            i, j = pos
+            for di, dj in regra.vizinhos:
+                viz = (i + di, j + dj)
+                if tabuleiro.contem(viz) and viz not in vistas and tabuleiro[viz] &gt;= limiar:
+                    vistas.add(viz)
+                    pilha.append(viz)
+        encontrados.append(aglomerado)
+
+    return encontrados
+
+
+def maior_aglomerado(tabuleiro: Tabuleiro, regra: RegraTombamento) -&gt; int:
+    &quot;&quot;&quot;Tamanho do maior aglomerado: é por eles que as avalanches grandes se propagam.&quot;&quot;&quot;
+    return max((len(a) for a in aglomerados(tabuleiro, regra)), default=0)</code></pre></figure>
+      <p><strong>Check</strong> the lemma on a board in the critical state: a grain on any cell of a cluster brings down the whole cluster.</p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import random
+from sandpile.indicators import aglomerados
+from sandpile.rules import RegraBTW
+from sandpile.simulation import Simulacao
+from sandpile.sampling import SorteioUniforme
+from sandpile.board import Tabuleiro, TabuleiroHipotetico
+
+regra = RegraBTW()
+t = Tabuleiro(30)
+sim = Simulacao(t, SorteioUniforme(random.Random(1)), regra)
+for _ in range(4000):
+    sim.passo()
+
+grupos = aglomerados(t, regra)
+print(f&quot;{len(grupos)} aglomerados; o maior tem {max(map(len, grupos))} células&quot;)
+
+for grupo in grupos:
+    origem = next(iter(grupo))
+    hipotese = TabuleiroHipotetico(t)
+    hipotese.adicionar(origem)
+    tombadas = {p for onda in regra.ondas(hipotese, [origem]) for p in onda}
+    assert grupo &lt;= tombadas
+print(&quot;lema confirmado em todos os aglomerados&quot;)</code></pre><div class="saida"><span class="rotulo">output</span><pre>94 aglomerados; o maior tem 45 células
+lema confirmado em todos os aglomerados</pre></div></figure>
+    </section>
+
+    <section id="passo-6">
+      <h2 class="titulo"><span class="num">Step 6</span>The risk monitor</h2>
+      <p><a href="#risco">Section 7</a> turned into code:</p>
+      <ul>
+        <li><code>tamanho_se_cair(tabuleiro, pos)</code> computes <var>s</var><sub><var>x</var></sub>: it creates a <code>TabuleiroHipotetico</code>, adds a grain at <code>pos</code> and counts the rule's topplings. The real board does not change.</li>
+        <li><code>_tamanhos_no_aglomerado</code> is the shortcut <var>s</var><sub><var>c</var></sub> = |<var>C</var>| + <var>S</var><sub><var>C</var></sub> + <var>r</var><sub><var>c</var></sub>: it topples the cluster once on a shared hypothetical board (<code>comum</code>), stabilizes it, and only then computes what is left for each cell. The hypothetical board for the remainder is built on top of <code>comum</code>, a "what if" inside another.</li>
+        <li><code>avaliar</code> puts it all together and returns a <code>Risco</code> with the map, the zone <var>Z</var>, the chance <var>R</var> and whether there is an alert.</li>
+      </ul>
+      <p>Cells with fewer than 3 grains are left out of the map: a grain on them brings nothing down.</p>
+      <figure class="codigo"><figcaption><span>sandpile/risk.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from dataclasses import dataclass
+
+from .indicators import aglomerados
+from .rules import RegraTombamento
+from .board import Posicao, Tabuleiro, TabuleiroHipotetico
+
+
+@dataclass
+class Risco:
+    mapa: dict[Posicao, int]  # tamanho da avalanche se o próximo grão cair em cada célula crítica
+    zona: set[Posicao]        # células onde o próximo grão dispararia uma catástrofe
+    chance: float             # probabilidade de o próximo grão cair na zona
+    alerta: bool
+
+
+class MonitorDeRisco:
+    &quot;&quot;&quot;Calcula, antes de cada grão, a chance de ele disparar uma catástrofe.
+
+    Para cada célula a um grão de tombar, simula &quot;e se o próximo grão cair
+    aqui?&quot; num tabuleiro hipotético. A chance é a fração do tabuleiro em que o
+    resultado seria uma avalanche &gt;= tamanho_catastrofico (vale para sorteio
+    uniforme, em que toda célula tem a mesma probabilidade).
+    &quot;&quot;&quot;
+
+    def __init__(self, regra: RegraTombamento, tamanho_catastrofico: int, chance_alerta: float):
+        self.regra = regra
+        self.tamanho_catastrofico = tamanho_catastrofico
+        self.chance_alerta = chance_alerta
+
+    def tamanho_se_cair(self, tabuleiro: Tabuleiro, pos: Posicao) -&gt; int:
+        hipotese = TabuleiroHipotetico(tabuleiro)
+        hipotese.adicionar(pos)
+        return sum(len(onda) for onda in self.regra.ondas(hipotese, [pos]))
+
+    def _tamanhos_no_aglomerado(self, tabuleiro: Tabuleiro,
+                                aglomerado: set[Posicao]) -&gt; dict[Posicao, int]:
+        &quot;&quot;&quot;Igual a chamar tamanho_se_cair em cada célula do aglomerado, só que rápido.
+
+        Um grão em qualquer célula do aglomerado derruba o aglomerado inteiro
+        uma vez. Pela propriedade abeliana, essa parte e tudo o que ela provoca
+        são iguais para todas as células dele: simula isso uma vez só e depois,
+        para cada célula, só o que o grão extra ainda causa.
+        &quot;&quot;&quot;
+        comum = TabuleiroHipotetico(tabuleiro)
+        tocadas = set(aglomerado)
+        for pos in aglomerado:
+            tocadas.update(self.regra.tombar(comum, pos))
+        tamanho_comum = len(aglomerado) + sum(len(o) for o in self.regra.ondas(comum, tocadas))
+
+        return {pos: tamanho_comum + self.tamanho_se_cair(comum, pos) for pos in aglomerado}
+
+    def avaliar(self, tabuleiro: Tabuleiro) -&gt; Risco:
+        mapa = {}
+        for aglomerado in aglomerados(tabuleiro, self.regra):
+            mapa.update(self._tamanhos_no_aglomerado(tabuleiro, aglomerado))
+        zona = {p for p, tamanho in mapa.items() if tamanho &gt;= self.tamanho_catastrofico}
+        chance = len(zona) / tabuleiro.n ** 2
+        return Risco(mapa, zona, chance, chance &gt;= self.chance_alerta)</code></pre></figure>
+      <p><strong>Check</strong> the shortcut against a real simulation, run on a copy of the board:</p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import copy
+import random
+from sandpile.rules import RegraBTW
+from sandpile.risk import MonitorDeRisco
+from sandpile.simulation import Simulacao
+from sandpile.sampling import SorteioUniforme
+from sandpile.board import Tabuleiro
+
+regra = RegraBTW()
+t = Tabuleiro(30)
+sim = Simulacao(t, SorteioUniforme(random.Random(1)), regra)
+for _ in range(4000):
+    sim.passo()
+
+monitor = MonitorDeRisco(regra, tamanho_catastrofico=550, chance_alerta=0.05)
+risco = monitor.avaliar(t)
+while not risco.zona:  # solta grãos até aparecer uma zona de perigo
+    sim.passo()
+    risco = monitor.avaliar(t)
+print(f&quot;chance de catástrofe: {risco.chance:.1%}, zona com {len(risco.zona)} células&quot;)
+
+p = max(risco.mapa, key=risco.mapa.get)  # a célula mais perigosa
+copia = copy.deepcopy(t)
+copia.adicionar(p)
+print(&quot;atalho:&quot;, risco.mapa[p], &quot; simulação de verdade:&quot;, sum(len(o) for o in regra.ondas(copia)))</code></pre><div class="saida"><span class="rotulo">output</span><pre>chance de catástrofe: 1.6%, zona com 14 células
+atalho: 556  simulação de verdade: 556</pre></div></figure>
+    </section>
+
+    <section id="passo-7">
+      <h2 class="titulo"><span class="num">Step 7</span>Wave-by-wave playback</h2>
+      <p>Without this piece, the animation would be too fast for a person to follow. <code>ReproducaoEmOndas</code> decides how far the simulation moves on each frame and draws nothing, which is why it can be tested without a window. It switches between two states:</p>
+      <div class="estados" role="img" aria-label="Two states: dropping grains and avalanche. A grain that sets off an avalanche leads to the avalanche state; when it ends, dropping resumes. A new alert stops before the grain is dropped.">
+        <div class="peca"><code>dropping grains</code><span>up to 20 per frame; checks the risk before each one</span></div>
+        <div class="seta">a grain triggers →<br>← the avalanche ends</div>
+        <div class="peca"><code>avalanche</code><span>one wave per frame</span></div>
+      </div>
+      <p>Before each grain, <code>_avaliar_risco</code> asks the monitor. If the alert <strong>has just started</strong>, the playback stops before dropping the grain and sets <code>alerta_novo</code> (new alert), which the animation uses to pause. While the alert lasts, it does not pause again. <code>_estado_avaliado</code> avoids recomputing the risk of the same board when you resume after a pause.</p>
+      <figure class="codigo"><figcaption><span>sandpile/playback.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from typing import Iterator
+
+from .risk import MonitorDeRisco, Risco
+from .simulation import Simulacao
+from .board import Posicao
+
+
+class ReproducaoEmOndas:
+    &quot;&quot;&quot;Avança a simulação no ritmo de quem está assistindo.
+
+    Entre avalanches, solta até `graos_por_quadro` grãos de uma vez. Quando um
+    grão dispara uma avalanche, para nele e passa a avançar uma onda por quadro.
+    Com um monitor de risco, avalia o tabuleiro antes de cada grão e para
+    antes de soltá-lo quando um alerta começa (`alerta_novo`).
+    Não desenha nada: só diz em que ponto a simulação está.
+    &quot;&quot;&quot;
+
+    def __init__(self, simulacao: Simulacao, graos_por_quadro: int = 20,
+                 monitor: MonitorDeRisco | None = None):
+        self.simulacao = simulacao
+        self.graos_por_quadro = graos_por_quadro
+        self.monitor = monitor
+        self.tamanhos: list[int] = []  # tamanho da avalanche de cada grão (0 = nenhuma)
+        self.ultimo_grao: Posicao | None = None
+
+        # avalanche em andamento, ou a última que terminou
+        self.onda_atual: list[Posicao] = []
+        self.area: set[Posicao] = set()
+        self.n_ondas = 0
+        self.tamanho = 0
+        self._ondas: Iterator[list[Posicao]] | None = None
+
+        # risco avaliado antes do próximo grão (ou do grão em andamento)
+        self.risco: Risco | None = None
+        self.chances: list[float] = []  # chance de catástrofe antes de cada grão
+        self.alerta_novo = False
+        self._estado_avaliado = False
+
+    @property
+    def em_avalanche(self) -&gt; bool:
+        return self._ondas is not None
+
+    def avancar(self) -&gt; None:
+        self.alerta_novo = False
+        if self.em_avalanche:
+            self._proxima_onda()
+        else:
+            self._soltar_graos()
+
+    def terminar_avalanche(self) -&gt; None:
+        while self.em_avalanche:
+            self._proxima_onda()
+
+    def _soltar_graos(self) -&gt; None:
+        for _ in range(self.graos_por_quadro):
+            if self._avaliar_risco():
+                return  # alerta acabou de começar: para antes de soltar o grão
+
+            self.ultimo_grao = self.simulacao.soltar_grao()
+            self._estado_avaliado = False
+            ondas = self.simulacao.ondas(self.ultimo_grao)
+            primeira = next(ondas, None)
+            if primeira is None:
+                self.tamanhos.append(0)
+                continue
+
+            self._ondas = ondas
+            self.area = set()
+            self.n_ondas = self.tamanho = 0
+            self._registrar(primeira)
+            return
+
+    def _avaliar_risco(self) -&gt; bool:
+        &quot;&quot;&quot;Avalia o tabuleiro atual; True se um alerta acabou de começar.&quot;&quot;&quot;
+        if self.monitor is None or self._estado_avaliado:
+            return False
+
+        estava_em_alerta = self.risco is not None and self.risco.alerta
+        self.risco = self.monitor.avaliar(self.simulacao.tabuleiro)
+        self.chances.append(self.risco.chance)
+        self._estado_avaliado = True
+        self.alerta_novo = self.risco.alerta and not estava_em_alerta
+        return self.alerta_novo
+
+    def _proxima_onda(self) -&gt; None:
+        onda = next(self._ondas, None)
+        if onda is None:
+            self.tamanhos.append(self.tamanho)
+            self._ondas = None
+            self.onda_atual = []
+        else:
+            self._registrar(onda)
+
+    def _registrar(self, onda: list[Posicao]) -&gt; None:
+        self.onda_atual = onda
+        self.area.update(onda)
+        self.n_ondas += 1
+        self.tamanho += len(onda)</code></pre></figure>
+      <p><strong>Check</strong>, with no window at all, when the first alert shows up on a 30 × 30 board:</p>
+      <figure class="codigo"><figcaption><span>check.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import random
+from sandpile.rules import RegraBTW
+from sandpile.playback import ReproducaoEmOndas
+from sandpile.risk import MonitorDeRisco
+from sandpile.simulation import Simulacao
+from sandpile.sampling import SorteioUniforme
+from sandpile.board import Tabuleiro
+
+regra = RegraBTW()
+simulacao = Simulacao(Tabuleiro(30), SorteioUniforme(random.Random(11)), regra)
+reproducao = ReproducaoEmOndas(simulacao, monitor=MonitorDeRisco(regra, 550, 0.05))
+
+while not reproducao.alerta_novo:  # avança quadro a quadro até o primeiro alerta
+    reproducao.avancar()
+
+print(f&quot;primeiro alerta antes do grão {len(reproducao.tamanhos) + 1}&quot;)
+print(f&quot;{reproducao.risco.chance:.1%} de chance, zona com {len(reproducao.risco.zona)} células&quot;)</code></pre><div class="saida"><span class="rotulo">output</span><pre>primeiro alerta antes do grão 1933
+6.6% de chance, zona com 59 células</pre></div></figure>
+    </section>
+
+    <section id="passo-8">
+      <h2 class="titulo"><span class="num">Step 8</span>The animation</h2>
+      <p><code>AnimacaoPilha</code> only draws and handles the keyboard. The board is made of stacked <code>imshow</code> layers, in the order they are created:</p>
+      <ol>
+        <li>the grains, one colour per height;</li>
+        <li>the danger zone, in semi-transparent blue;</li>
+        <li>the avalanche, light red for cells that already toppled and bright red for cells toppling now;</li>
+        <li>a black X where the last grain landed.</li>
+      </ol>
+      <p>On the right there are two charts: avalanche sizes, and the chance of catastrophe before each grain, with the alert limit dashed and the actual catastrophes in red.</p>
+      <p><code>FuncAnimation</code> calls <code>_quadro</code> (frame) at every interval. The frame advances the playback, pauses if <code>alerta_novo</code> is set and redraws. Keep the animation in <code>self._anim</code>: without a live reference, Python garbage-collects it and the window freezes.</p>
+      <figure class="codigo"><figcaption><span>sandpile/visualization.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.colors import ListedColormap
+
+from .playback import ReproducaoEmOndas
+
+CORES_GRAOS = [&quot;#f7f1e3&quot;, &quot;#e8c872&quot;, &quot;#c9963b&quot;, &quot;#7a5320&quot;, &quot;#4a2f10&quot;,
+               &quot;#3a240c&quot;, &quot;#2b1a08&quot;, &quot;#1c1105&quot;]
+# transparente / já tombou nesta avalanche / tombando agora
+CORES_AVALANCHE = ListedColormap([(0, 0, 0, 0), (0.85, 0.1, 0.1, 0.35), (0.85, 0.1, 0.1, 0.9)])
+CORES_ZONA = ListedColormap([(0, 0, 0, 0), (0.15, 0.35, 0.95, 0.65)])
+COR_ZONA = &quot;#2659f2&quot;
+VELOCIDADES_MS = [800, 400, 200, 100, 50, 25]
+AJUDA = &quot;espaço: pausar/continuar    n: próximo quadro    + / −: velocidade    enter: terminar avalanche&quot;
+
+
+class AnimacaoPilha:
+    &quot;&quot;&quot;Desenha a reprodução e trata o teclado.
+
+    Esquerda: grãos em cada célula; em vermelho forte, as células tombando na
+    onda atual; em vermelho claro, as que já tombaram nesta avalanche; em azul,
+    a zona de perigo (onde o próximo grão causaria uma catástrofe); o X é o
+    último grão solto. Direita: tamanho das avalanches e chance de catástrofe.
+    Pausa sozinha quando um alerta de risco começa.
+    &quot;&quot;&quot;
+
+    def __init__(self, reproducao: ReproducaoEmOndas):
+        self.reproducao = reproducao
+        self._velocidade = 3
+        self._pausado = False
+        self._montar_figura()
+
+    def _montar_figura(self) -&gt; None:
+        tabuleiro = self.reproducao.simulacao.tabuleiro
+        critico = self.reproducao.simulacao.regra.critico
+        vazio = [[0] * tabuleiro.n for _ in range(tabuleiro.n)]
+
+        self.fig, eixos = plt.subplot_mosaic([[&quot;tab&quot;, &quot;ava&quot;], [&quot;tab&quot;, &quot;risco&quot;]],
+                                             figsize=(13, 6.5), width_ratios=[1.15, 1])
+        self.ax_tab, self.ax_ava, self.ax_risco = eixos[&quot;tab&quot;], eixos[&quot;ava&quot;], eixos[&quot;risco&quot;]
+
+        self.img = self.ax_tab.imshow(tabuleiro.como_matriz(),
+                                      cmap=ListedColormap(CORES_GRAOS[:critico]),
+                                      vmin=-0.5, vmax=critico - 0.5)
+        self.fig.colorbar(self.img, ax=self.ax_tab, ticks=range(critico), label=&quot;grãos&quot;,
+                          shrink=0.8)
+        self.ax_tab.set_xticks([])
+        self.ax_tab.set_yticks([])
+
+        self.img_zona = self.ax_tab.imshow(vazio, cmap=CORES_ZONA, vmin=0, vmax=1)
+        self.img_ava = self.ax_tab.imshow(vazio, cmap=CORES_AVALANCHE, vmin=0, vmax=2)
+        self.marca, = self.ax_tab.plot([], [], &quot;x&quot;, color=&quot;black&quot;, markersize=10, mew=2)
+
+        self.linha, = self.ax_ava.plot([], [], lw=0.8, color=&quot;#7a5320&quot;)
+        self.ponto, = self.ax_ava.plot([], [], &quot;o&quot;, color=&quot;#d91a1a&quot;)
+        self.ax_ava.set_ylabel(&quot;tamanho da avalanche&quot;)
+
+        self.linha_risco, = self.ax_risco.plot([], [], lw=0.8, color=COR_ZONA)
+        self.catastrofes, = self.ax_risco.plot([], [], &quot;o&quot;, ms=5, color=&quot;#d91a1a&quot;,
+                                               label=&quot;catástrofes que aconteceram&quot;)
+        self.ax_risco.set_xlabel(&quot;grãos adicionados&quot;)
+        self.ax_risco.set_ylabel(&quot;chance de catástrofe\nno próximo grão (%)&quot;)
+        monitor = self.reproducao.monitor
+        if monitor:
+            self.ax_risco.axhline(monitor.chance_alerta * 100, ls=&quot;--&quot;, color=&quot;gray&quot;,
+                                  label=&quot;limite de alerta&quot;)
+            self.ax_risco.legend(loc=&quot;upper left&quot;, fontsize=8)
+        else:
+            self.ax_risco.set_title(&quot;monitor de risco desligado&quot;, fontsize=9)
+
+        self.rodape = self.fig.text(0.5, 0.02, &quot;&quot;, ha=&quot;center&quot;, fontsize=9)
+        self.fig.canvas.mpl_connect(&quot;key_press_event&quot;, self._tecla)
+
+    def _quadro(self, _frame=None):
+        self.reproducao.avancar()
+        if self.reproducao.alerta_novo:
+            self._pausar(True)
+        self._desenhar()
+
+    def _desenhar(self) -&gt; None:
+        r = self.reproducao
+        tabuleiro = r.simulacao.tabuleiro
+        n = tabuleiro.n
+
+        self.img.set_data(tabuleiro.como_matriz())
+        agora = set(r.onda_atual)
+        self.img_ava.set_data([[2 if (i, j) in agora else 1 if (i, j) in r.area else 0
+                                for j in range(n)] for i in range(n)])
+        zona = r.risco.zona if r.risco else set()
+        self.img_zona.set_data([[1 if (i, j) in zona else 0 for j in range(n)]
+                                for i in range(n)])
+        if r.ultimo_grao:
+            i, j = r.ultimo_grao
+            self.marca.set_data([j], [i])
+
+        self.linha.set_data(range(len(r.tamanhos)), r.tamanhos)
+        if r.em_avalanche:
+            self.ponto.set_data([len(r.tamanhos)], [r.tamanho])
+        else:
+            self.ponto.set_data([], [])
+        self.ax_ava.set_xlim(0, len(r.tamanhos) + 1)
+        self.ax_ava.set_ylim(0, max(max(r.tamanhos, default=0), r.tamanho, 1) * 1.1)
+
+        if r.monitor:
+            self._desenhar_risco()
+
+        if r.em_avalanche:
+            estado = f&quot;AVALANCHE: onda {r.n_ondas}, {r.tamanho} tombamentos, {len(r.area)} células&quot;
+        else:
+            estado = f&quot;última avalanche: {r.tamanho} tombamentos em {r.n_ondas} ondas&quot;
+        titulo = f&quot;grãos adicionados: {len(r.tamanhos)}   no tabuleiro: {tabuleiro.total()}\n{estado}&quot;
+        if r.risco and r.risco.alerta:
+            titulo += (f&quot;\nALERTA: {r.risco.chance:.1%} de chance de o próximo grão causar &quot;
+                       f&quot;avalanche ≥ {r.monitor.tamanho_catastrofico} (zona azul)&quot;)
+        self.ax_tab.set_title(titulo, fontsize=10,
+                              color=&quot;#b00000&quot; if r.risco and r.risco.alerta else &quot;black&quot;)
+
+        pausa = &quot;   [PAUSADO]&quot; if self._pausado else &quot;&quot;
+        self.rodape.set_text(f&quot;{AJUDA}\n{VELOCIDADES_MS[self._velocidade]} ms por quadro{pausa}&quot;)
+
+    def _desenhar_risco(self) -&gt; None:
+        r = self.reproducao
+        chances = [c * 100 for c in r.chances]
+        self.linha_risco.set_data(range(len(chances)), chances)
+
+        limite = r.monitor.tamanho_catastrofico
+        reais = [k for k, s in enumerate(r.tamanhos) if s &gt;= limite and k &lt; len(chances)]
+        self.catastrofes.set_data(reais, [chances[k] for k in reais])
+
+        self.ax_risco.set_xlim(0, len(r.tamanhos) + 1)
+        self.ax_risco.set_ylim(0, max(max(chances, default=0), r.monitor.chance_alerta * 100) * 1.2)
+
+    def _pausar(self, pausado: bool) -&gt; None:
+        self._pausado = pausado
+        if pausado:
+            self._anim.pause()
+        else:
+            self._anim.resume()
+
+    def _tecla(self, evento) -&gt; None:
+        if evento.key == &quot; &quot;:
+            self._pausar(not self._pausado)
+        elif evento.key == &quot;n&quot; and self._pausado:
+            self.reproducao.avancar()
+        elif evento.key in (&quot;+&quot;, &quot;=&quot;):
+            self._velocidade = min(self._velocidade + 1, len(VELOCIDADES_MS) - 1)
+        elif evento.key == &quot;-&quot;:
+            self._velocidade = max(self._velocidade - 1, 0)
+        elif evento.key == &quot;enter&quot;:
+            self.reproducao.terminar_avalanche()
+        else:
+            return
+
+        self._anim.event_source.interval = VELOCIDADES_MS[self._velocidade]
+        self._desenhar()
+        self.fig.canvas.draw_idle()
+
+    def mostrar(self) -&gt; None:
+        self._desenhar()
+        # a referência precisa ficar viva enquanto a janela estiver aberta
+        self._anim = FuncAnimation(self.fig, self._quadro, interval=VELOCIDADES_MS[self._velocidade],
+                                   cache_frame_data=False)
+        plt.tight_layout(rect=(0, 0.07, 1, 1))
+        plt.show()</code></pre></figure>
+    </section>
+
+    <section id="passo-9">
+      <h2 class="titulo"><span class="num">Step 9</span>Putting it together</h2>
+      <p>Now that every module exists, fill in <code>__init__.py</code>. It re-exports the classes so the rest of the code can write <code>from sandpile import Tabuleiro</code>:</p>
+      <figure class="codigo"><figcaption><span>sandpile/__init__.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from .indicators import aglomerados
+from .rules import VIZINHANCA_4, VIZINHANCA_8, RegraBTW, RegraTombamento
+from .playback import ReproducaoEmOndas
+from .risk import MonitorDeRisco, Risco
+from .simulation import Avalanche, Simulacao
+from .sampling import Sorteador, SorteioCentro, SorteioUniforme
+from .board import Posicao, Tabuleiro, TabuleiroHipotetico
+from .visualization import AnimacaoPilha</code></pre></figure>
+      <p><code>main.py</code> creates the pieces and hands them to one another. It is the only place that knows the concrete classes:</p>
+      <figure class="codigo"><figcaption><span>main.py</span><button type="button" class="copiar">Copy</button></figcaption><pre><code class="py">from sandpile import (AnimacaoPilha, MonitorDeRisco, RegraBTW, ReproducaoEmOndas,
+                            Simulacao, SorteioUniforme, Tabuleiro)
+
+
+def animacao():
+    # aqui só se montam as peças; trocar uma delas não mexe nas outras
+    tabuleiro = Tabuleiro(30)
+    regra = RegraBTW()
+    simulacao = Simulacao(tabuleiro, SorteioUniforme(), regra)
+    # catástrofe = avalanche entre as ~1% maiores num 30x30;
+    # a chance média de um grão causar uma é ~1%, o alerta dispara com 5x isso
+    monitor = MonitorDeRisco(regra, tamanho_catastrofico=550, chance_alerta=0.05)
+    AnimacaoPilha(ReproducaoEmOndas(simulacao, graos_por_quadro=20, monitor=monitor)).mostrar()
+
+
+if __name__ == &quot;__main__&quot;:
+    animacao()</code></pre></figure>
+      <p>Run <code>python main.py</code>. In the critical state, the animation pauses on its own when the chance of catastrophe goes over the limit, with the danger zone in blue and the title in red. The controls are:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Key</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><kbd>space</kbd></td><td>pause or resume</td></tr>
+            <tr><td><kbd>n</kbd></td><td>advance one frame, while paused</td></tr>
+            <tr><td><kbd>+</kbd> / <kbd>−</kbd></td><td>faster or slower, from 800 ms to 25 ms per frame</td></tr>
+            <tr><td><kbd>enter</kbd></td><td>finish the current avalanche at once</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Choosing the two limits</h3>
+      <p><code>tamanho_catastrofico</code> defines what counts as a catastrophe, and <code>chance_alerta</code> the risk at which the animation pauses. The two have to fit together: if the average chance of catastrophe is already above the alert limit, the alert stays on almost all the time. On the 30 × 30 board:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th class="n">tamanho_catastrofico</th><th class="n">grains causing a catastrophe</th><th>with chance_alerta = 0.05</th></tr></thead>
+          <tbody>
+            <tr><td class="n">550</td><td class="n">1.1%</td><td>rare alerts, only in the most dangerous states (≈ 5 times the average)</td></tr>
+            <tr><td class="n">150</td><td class="n">7.4%</td><td>the average is already above the limit, so the alert stays on most of the time; raise <code>chance_alerta</code> to something like 0.2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>For another board size, measure the size distribution first and pick <code>tamanho_catastrofico</code> near the 99th percentile. On the 20 × 20 board in the demo above, that value is about 240.</p>
+    </section>
+
+    <!-- ============================== PART III ============================== -->
+    <div class="parte" id="explorar">
+      <p class="rotulo">Part III</p>
+      <h2>Explore</h2>
+      <p>With the pieces kept apart, each experiment below changes one line of <code>main.py</code> or adds a new class.</p>
+    </div>
+
+    <section id="experimentos">
+      <h2 class="titulo">One-line experiments</h2>
+      <ul>
+        <li><strong>The fractal.</strong> <code>Simulacao(Tabuleiro(101), SorteioCentro(), regra)</code> drops every grain in the centre and draws the sandpile fractal. Pass <code>monitor=None</code> to the playback: the chance calculation assumes uniform drops and does not hold here.</li>
+        <li><strong>Eight neighbours.</strong> <code>RegraBTW(VIZINHANCA_8)</code> includes the diagonals. The threshold becomes 8 automatically and the colour list already has eight shades.</li>
+        <li><strong>Board size.</strong> Larger boards have larger avalanches and an exponent <var>τ</var> closer to the literature, but the risk monitor gets slower, because there are more cells to evaluate.</li>
+      </ul>
+      <h3>Exercises</h3>
+      <ol>
+        <li>Store the duration <var>T</var> of each avalanche and plot its log-log histogram. Does it follow a power law too?</li>
+        <li>Count how many times each cell toppled over 50,000 grains and draw that map. Why is the centre more active than the edges?</li>
+        <li>Write a new <code>RegraTombamento</code> in which a cell loses 4 grains but only passes 3 on, losing one along the way. Without touching <code>Simulacao</code>, check whether the power law survives or a typical avalanche size appears.</li>
+        <li>Change the <code>Sorteador</code> so that grains fall more often in one region. What happens to the danger zone? Does the chance calculation still hold?</li>
+      </ol>
+    </section>
+
+    <section id="referencias">
+      <h2 class="titulo">References</h2>
+      <ul>
+        <li>P. Bak, C. Tang and K. Wiesenfeld, "Self-organized criticality: An explanation of the 1/f noise", <em>Physical Review Letters</em> 59, 381 (1987). The paper that proposed the model.</li>
+        <li>D. Dhar, "Self-organized critical state of sandpile automaton models", <em>Physical Review Letters</em> 64, 1613 (1990). The abelian property.</li>
+        <li>P. Bak, <em>How Nature Works: The Science of Self-Organized Criticality</em> (1996). An introduction without heavy maths.</li>
+        <li>H. J. Jensen, <em>Self-Organized Criticality: Emergent Complex Behavior in Physical and Biological Systems</em> (1998).</li>
+        <li>G. Pruessner, <em>Self-Organised Criticality: Theory, Models and Characterisation</em> (2012). A complete technical reference, including the discussion of the BTW exponents.</li>
+      </ul>
+    </section>
+  </article>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="nota-rodape">The figures in this guide were measured with its own code, on a 30 × 30 board unless stated otherwise. The outputs of the "Check" snippets were produced by running each snippet.</p>
+    &copy; <span data-year>2026</span> Marco Mialaret Júnior. Built with plain HTML, CSS &amp; JS.
+  </div>
+</footer>
+
+<script src="../assets/js/script.js"></script>
+<script src="guia.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

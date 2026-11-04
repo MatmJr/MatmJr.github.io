@@ -19,6 +19,15 @@
   }
 })();
 
+/* ---------- language switch: open the other page at the same section ---------- */
+(function () {
+  document.querySelectorAll('.lang-switch a:not([aria-current])').forEach(function (link) {
+    link.addEventListener('click', function () {
+      link.href = link.getAttribute('href').split('#')[0] + location.hash;
+    });
+  });
+})();
+
 /* ---------- mobile nav ---------- */
 (function () {
   var navToggle = document.querySelector('[data-nav-toggle]');

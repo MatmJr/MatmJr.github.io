@@ -8,6 +8,7 @@
   <title>Marco Mialaret Júnior — Data Architect &amp; Professor</title>
   <meta name="description" content="Marco Mialaret Júnior — Senior Data Architect and Professor. PhD in Computer Science (UFPE), researching phase-type distributions for system reliability. Building data pipelines and agentic AI systems.">
 
+  <link rel="alternate" hreflang="pt-BR" href="./pt.html">
   <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
   <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -29,10 +30,15 @@
         <a href="#resume" data-nav-link>Resume</a>
         <a href="#publications" data-nav-link>Publications</a>
         <a href="#projects" data-nav-link>Projects</a>
+        <a href="#studies" data-nav-link>Studies</a>
         <a href="#contact" data-nav-link>Contact</a>
       </nav>
 
       <div class="topbar-actions">
+        <nav class="lang-switch" aria-label="Language">
+          <a href="index.html" lang="en" aria-current="page">EN</a>
+          <a href="pt.html" lang="pt" hreflang="pt">PT</a>
+        </nav>
         <button class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle color theme">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
@@ -415,6 +421,38 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ STUDIES ============ -->
+    <section id="studies">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Studies</span>
+          <h2 class="section-title">Study notes</h2>
+          <p class="section-lede">Long-form guides that pair the theory with working code, built step by step.</p>
+        </div>
+
+        <article class="study-card" data-reveal>
+          <div>
+            <span class="study-meta">Guide · Python · interactive demo</span>
+            <h3>The sandpile: self-organized criticality in Python</h3>
+            <p>
+              Grains fall one by one until a single grain can do nothing at all or bring down half the
+              board. The guide covers the Bak–Tang–Wiesenfeld model, avalanche statistics and the
+              abelian property, then builds an animation that pauses when the risk of a catastrophic
+              avalanche gets high.
+            </p>
+            <div class="project-tags"><span>Statistical physics</span><span>Python</span><span>SOLID</span><span>Matplotlib</span></div>
+            <a href="./studies/en.html" class="btn btn-primary">
+              Read the guide
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+          <a class="study-preview" href="./studies/en.html" tabindex="-1" aria-hidden="true">
+            <img src="./assets/images/sandpile-preview.svg" alt="" width="240" height="240">
+          </a>
+        </article>
       </div>
     </section>
 

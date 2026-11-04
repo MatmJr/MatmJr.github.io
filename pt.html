@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marco Mialaret Júnior — Arquiteto de Dados &amp; Professor</title>
+  <meta name="description" content="Marco Mialaret Júnior — Arquiteto de Dados Sênior e Professor. Doutor em Ciência da Computação (UFPE), pesquisando distribuições phase-type para confiabilidade de sistemas. Constrói pipelines de dados e sistemas de IA agêntica.">
+
+  <link rel="alternate" hreflang="en" href="./index.html">
+  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#top" class="brand">Marco Mialaret<span class="dot">.</span></a>
+
+      <nav class="nav-links" data-nav-links>
+        <a href="#about" data-nav-link>Sobre</a>
+        <a href="#resume" data-nav-link>Currículo</a>
+        <a href="#publications" data-nav-link>Publicações</a>
+        <a href="#projects" data-nav-link>Projetos</a>
+        <a href="#studies" data-nav-link>Estudos</a>
+        <a href="#contact" data-nav-link>Contato</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <nav class="lang-switch" aria-label="Idioma">
+          <a href="index.html" lang="en" hreflang="en">EN</a>
+          <a href="pt.html" lang="pt" aria-current="page">PT</a>
+        </nav>
+        <button class="icon-btn theme-toggle" data-theme-toggle aria-label="Alternar tema de cores">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+        </button>
+        <button class="icon-btn nav-toggle" data-nav-toggle aria-label="Abrir navegação" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top">
+      <div class="container hero-inner">
+        <div>
+          <span class="hero-kicker">Recife, Brasil</span>
+          <h1 class="hero-title">Marco Mialaret <span class="accent">Júnior</span></h1>
+          <p class="hero-role">
+            <b>Arquiteto de Dados Sênior</b> &amp; <b>Professor</b> — projeto pipelines de dados e
+            sistemas de IA agêntica, e sou doutor em Ciência da Computação, com pesquisa sobre como
+            distribuições phase-type modelam a confiabilidade de sistemas.
+          </p>
+
+          <ul class="hero-meta">
+            <li><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10.5V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8.5"/><path d="M2 9l10-6 10 6"/></svg> FSBR · TJPE</span></li>
+            <li><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg> Cesar School</span></li>
+            <li><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Recife, PE, Brasil</span></li>
+          </ul>
+
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">
+              Ver projetos
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#contact" class="btn btn-outline">Entrar em contato</a>
+            <a href="https://github.com/MatmJr" target="_blank" rel="noopener" class="icon-btn" aria-label="Perfil no GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/marco-mialaret-junior/" target="_blank" rel="noopener" class="icon-btn" aria-label="Perfil no LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.4 20.4h-3.5v-5.6c0-1.3 0-3-1.9-3s-2.1 1.5-2.1 3v5.6H9.4V9h3.4v1.6c.5-.9 1.7-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.1zM5.3 7.4A2 2 0 1 1 5.3 3.4a2 2 0 0 1 0 4zM7 20.4H3.6V9H7v11.4z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-portrait">
+          <div class="hero-portrait-frame">
+            <img src="./assets/images/my-avatar.png" alt="Retrato de Marco Mialaret Júnior" width="260" height="260">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOCUS AREAS ============ -->
+    <section aria-label="Áreas de atuação">
+      <div class="container">
+        <div class="focus-grid" data-reveal-group>
+          <div class="focus-card" data-reveal>
+            <div class="focus-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+            <h3>Arquitetura de dados</h3>
+            <p>Pipelines de ingestão e integração de fontes estruturadas e não estruturadas, e desenho de sistemas orientados a dados.</p>
+          </div>
+          <div class="focus-card" data-reveal>
+            <div class="focus-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="8.5" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="14" r="1.3" fill="currentColor" stroke="none"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/></svg></div>
+            <h3>Sistemas de IA agêntica</h3>
+            <p>Agentes e serviços baseados em LLMs — incluindo um servidor MCP em FastAPI para orquestrar fluxos inteligentes.</p>
+          </div>
+          <div class="focus-card" data-reveal>
+            <div class="focus-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="20" x2="4" y2="11"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="20" y2="15"/></svg></div>
+            <h3>Confiabilidade &amp; estatística</h3>
+            <p>Modelagem de tempos de falha de sistemas com distribuições phase-type, ajustadas por Expectation-Maximization.</p>
+          </div>
+          <div class="focus-card" data-reveal>
+            <div class="focus-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></div>
+            <h3>Docência</h3>
+            <p>Engenharia de Dados, Inferência Estatística e Análise de Dados — lecionando desde 2011, do cálculo ao Big Data.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Sobre</span>
+          <h2 class="section-title">Da geometria algébrica à arquitetura de dados</h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-copy" data-reveal>
+            <p>
+              Sou licenciado em Matemática pela UFRPE (2008) e mestre em Matemática (2011), com
+              pesquisa em geometria algébrica. Por volta de 2018 meus interesses migraram para a
+              matemática computacional e, em 2023, concluí o curso de tecnólogo em Banco de Dados
+              no SENAC — o passo que me levou de vez para a área de dados.
+            </p>
+            <p>
+              Em 2026 concluí o doutorado em Ciência da Computação no CIn-UFPE, pesquisando modelos
+              estatísticos para tempos de falha de sistemas com distribuições phase-type, estimadas
+              por algoritmos de Expectation-Maximization. Hoje atuo como Arquiteto de Dados Sênior no
+              TJPE (via FSBR), construindo pipelines de ingestão e soluções de IA agêntica, e leciono
+              Engenharia de Dados, Inferência Estatística e Análise de Dados na Cesar School.
+            </p>
+          </div>
+
+          <div class="skills-panel" data-reveal>
+            <div class="skill-group">
+              <h4>Linguagens &amp; dados</h4>
+              <div class="pill-row">
+                <span class="pill">Python</span>
+                <span class="pill">Java</span>
+                <span class="pill">SQL</span>
+                <span class="pill">PySpark</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h4>Análise &amp; IA</h4>
+              <div class="pill-row">
+                <span class="pill">Machine Learning</span>
+                <span class="pill">LLM</span>
+                <span class="pill">Power BI</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h4>Nuvem &amp; ferramentas</h4>
+              <div class="pill-row">
+                <span class="pill">Amazon EC2</span>
+                <span class="pill">Amazon RDS</span>
+                <span class="pill">Git</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESUME: EXPERIENCE + EDUCATION ============ -->
+    <section id="resume">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Currículo</span>
+          <h2 class="section-title">Experiência &amp; formação</h2>
+        </div>
+
+        <div class="timeline-cols">
+          <div data-reveal>
+            <div class="timeline-head">
+              <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+              <h3>Experiência</h3>
+            </div>
+
+            <ol class="timeline">
+              <li class="timeline-item">
+                <h4>Arquiteto de Dados Sênior</h4>
+                <span class="timeline-org">FSBR — Fábrica de Software do Brasil · alocado no TJPE</span>
+                <span class="timeline-meta">nov 2025 — atual · Recife, Brasil</span>
+                <p>Pipelines de ingestão e integração de dados estruturados e não estruturados, e desenho de arquitetura orientada a dados. Construção de soluções de IA agêntica, incluindo um serviço MCP em FastAPI para orquestrar fluxos inteligentes e automatizar o processamento.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Consultor de Qualificação — Professor</h4>
+                <span class="timeline-org">Cesar School</span>
+                <span class="timeline-meta">jan 2026 — atual · Recife</span>
+                <p>Disciplinas de Engenharia de Dados, Inferência Estatística e Análise de Dados.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Gerente de Projetos de Desenvolvimento</h4>
+                <span class="timeline-org">Faculdade SENAC</span>
+                <span class="timeline-meta">dez 2024 — nov 2025 · Recife, Brasil</span>
+                <p>Liderou o "Hub do Comércio", plataforma digital da Fecomércio-PE construída sobre uma arquitetura de data lakehouse. Consolidou dados do IBGE, Banco Central, Receita Federal e fontes primárias em painéis interativos, relatórios automatizados e ferramentas de gestão financeira.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Instrutor Técnico II</h4>
+                <span class="timeline-org">Trybe</span>
+                <span class="timeline-meta">jul 2022 — jan 2024</span>
+                <p>Mentoria de estudantes em Python e Java por meio de projetos práticos — manutenção de sistemas, testes, revisão de código e produção de material didático.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Suporte de Infraestrutura</h4>
+                <span class="timeline-org">Tecnosolve</span>
+                <span class="timeline-meta">jan 2022 — jul 2022 · Recife, Brasil</span>
+                <p>Suporte técnico ao usuário final; diagnóstico de problemas de hardware, software, rede e sistema operacional, com documentação das soluções.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Professor Assistente</h4>
+                <span class="timeline-org">UFRPE · UNINASSAU · UNIFAVIP · SENAC</span>
+                <span class="timeline-meta">ago 2011 — jan 2025 · Recife &amp; Caruaru, Brasil</span>
+                <p>Disciplinas básicas de engenharia — Cálculo, Álgebra Linear, Geometria Analítica, Probabilidade &amp; Estatística, Equações Diferenciais, Métodos Numéricos — além de Big Data, Ciência de Dados, Bancos de Dados Relacionais e Gestão de Projetos.</p>
+              </li>
+            </ol>
+          </div>
+
+          <div data-reveal>
+            <div class="timeline-head">
+              <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></span>
+              <h3>Formação</h3>
+            </div>
+
+            <ol class="timeline">
+              <li class="timeline-item">
+                <h4>Doutorado em Ciência da Computação</h4>
+                <span class="timeline-org">UFPE (CIn)</span>
+                <span class="timeline-meta">ago 2019 — fev 2026 · Recife, Brasil</span>
+                <p>Pesquisa em engenharia de confiabilidade, modelando a confiabilidade de sistemas com distribuições phase-type. Aplicação de algoritmos de Expectation-Maximization (EM) para estimar os parâmetros das distribuições e contribuição para sua implementação no software do grupo de pesquisa.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Tecnólogo em Banco de Dados</h4>
+                <span class="timeline-org">SENAC São Paulo</span>
+                <span class="timeline-meta">mar 2021 — jul 2023</span>
+                <p>Fundamentos de gestão de bancos de dados — SQL e NoSQL, modelagem, consultas e manipulação de dados.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Mestrado em Matemática</h4>
+                <span class="timeline-org">Universidade Federal da Paraíba</span>
+                <span class="timeline-meta">jun 2009 — ago 2011 · João Pessoa, Brasil</span>
+                <p>Pesquisa em geometria algébrica; dissertação sobre curvas estáticas no plano projetivo complexo.</p>
+              </li>
+              <li class="timeline-item">
+                <h4>Licenciatura em Matemática</h4>
+                <span class="timeline-org">Universidade Federal Rural de Pernambuco</span>
+                <span class="timeline-meta">mar 2005 — dez 2008 · Recife, Brasil</span>
+                <p>Pesquisa sobre o princípio local-global pelo teorema de Hasse–Minkowski, relacionando soluções racionais de formas quadráticas aos seus completamentos locais.</p>
+              </li>
+            </ol>
+
+            <div class="timeline-head" style="margin-top: 40px;">
+              <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/><path d="M8.2 13.9L7 22l5-3 5 3-1.2-8.1"/></svg></span>
+              <h3>Certificados</h3>
+            </div>
+            <div class="cert-grid">
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Neural Networks and Deep Learning</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Improving Deep Neural Networks (Hyperparameter Tuning &amp; Optimization)</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Data Science: Solving Real Problems with Python &amp; Pandas</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Data Science: Data Visualization with Python</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Support Vector Machine Classification in Python</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Predict Future Product Prices Using Facebook Prophet</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Foundations: Data, Data, Everywhere</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Ask Questions to Make Data-Driven Decisions</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Prepare Data for Exploration</div>
+              <div class="cert-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Introduction to Git and GitHub</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PUBLICATIONS ============ -->
+    <section id="publications">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Publicações</span>
+          <h2 class="section-title">Pesquisa</h2>
+          <p class="section-lede">Trabalhos revisados por pares sobre modelagem de confiabilidade, computação em névoa e aprendizado de máquina aplicado.</p>
+        </div>
+
+        <div class="pub-list">
+          <article class="pub-item" data-reveal>
+            <span class="pub-year">2024</span>
+            <div>
+              <h4>Automated phase-type distribution fitting via expectation maximization</h4>
+              <p class="pub-authors">M. Mialaret, P. Pereira, A. Sá Barreto, T. Pinheiro, P. Maciel</p>
+              <p class="pub-venue">Journal of Reliable Intelligent Environments</p>
+            </div>
+          </article>
+          <article class="pub-item" data-reveal>
+            <span class="pub-year">2024</span>
+            <div>
+              <h4>Automated Reliability Analysis in Fog Computing Environment</h4>
+              <p class="pub-authors">M. Mialaret, et al.</p>
+              <p class="pub-venue">Workshop on Resilience Engineering in Computing Systems (RECS), SBC</p>
+            </div>
+          </article>
+          <article class="pub-item" data-reveal>
+            <span class="pub-year">2021</span>
+            <div>
+              <h4>Building energy consumption models based on smartphone user usage patterns</h4>
+              <p class="pub-authors">A. Sá Barreto Neto, F. Farias, M. Mialaret, B. Cartaxo, P. Lima, P. Maciel</p>
+              <p class="pub-venue">Knowledge-Based Systems</p>
+            </div>
+          </article>
+          <article class="pub-item" data-reveal>
+            <span class="pub-year">2021</span>
+            <div>
+              <h4>A methodology for selecting hardware performance counters for supporting non-intrusive diagnostic of flood DDoS attacks on web servers</h4>
+              <p class="pub-authors">P. P. Nascimento, P. Pereira, M. Mialaret, I. Ferreira, P. Maciel</p>
+              <p class="pub-venue">Computers &amp; Security</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Projetos</span>
+          <h2 class="section-title">Trabalhos selecionados</h2>
+          <p class="section-lede">Uma amostra de <a href="https://github.com/MatmJr" target="_blank" rel="noopener" style="text-decoration:underline;">github.com/MatmJr</a> — pipelines de dados, IA agêntica e materiais de aula.</p>
+        </div>
+
+        <div class="project-grid">
+
+          <article class="project-card" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+              <div class="project-links">
+                <a href="https://github.com/MatmJr/AirportsProject" target="_blank" rel="noopener" class="icon-btn" aria-label="AirportsProject no GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+                </a>
+              </div>
+            </div>
+            <h3>AirportsProject</h3>
+            <p>Um pipeline PySpark de ponta a ponta, conteinerizado com Docker Compose, para processar dados de aeroportos em escala.</p>
+            <div class="project-tags"><span>PySpark</span><span>Docker</span><span>Engenharia de Dados</span></div>
+          </article>
+
+          <article class="project-card" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+              <div class="project-links">
+                <a href="https://github.com/MatmJr/LLMCreditCardBot" target="_blank" rel="noopener" class="icon-btn" aria-label="LLMCreditCardBot no GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+                </a>
+              </div>
+            </div>
+            <h3>LLMCreditCardBot</h3>
+            <p>Um chatbot de linguagem natural para SQL com GPT-4o-mini, que permite consultar uma base de inadimplência e dados demográficos por uma interface em Streamlit.</p>
+            <div class="project-tags"><span>LLM</span><span>Streamlit</span><span>SQL</span></div>
+          </article>
+
+          <article class="project-card" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="20" x2="4" y2="11"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="20" y2="15"/></svg></span>
+              <div class="project-links">
+                <a href="https://github.com/MatmJr/ETL_IBGE_BCB" target="_blank" rel="noopener" class="icon-btn" aria-label="ETL_IBGE_BCB no GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+                </a>
+              </div>
+            </div>
+            <h3>ETL_IBGE_BCB</h3>
+            <p>Um pipeline ETL que extrai dados do Banco Central, transforma com Pandas, carrega em SQLite/CSV e exibe tudo num painel Dash + Plotly.</p>
+            <div class="project-tags"><span>ETL</span><span>Pandas</span><span>Dash</span></div>
+          </article>
+
+          <article class="project-card" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v6l-6 9a2 2 0 0 0 2 3h14a2 2 0 0 0 2-3l-6-9V3"/><path d="M6 15h12"/></svg></span>
+              <div class="project-links">
+                <a href="https://github.com/MatmJr/End2EndTitanic" target="_blank" rel="noopener" class="icon-btn" aria-label="End2EndTitanic no GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+                </a>
+              </div>
+            </div>
+            <h3>End2EndTitanic</h3>
+            <p>Uma aplicação Flask que prevê a probabilidade de sobrevivência de passageiros do Titanic com um modelo Random Forest.</p>
+            <div class="project-tags"><span>Flask</span><span>scikit-learn</span><span>ML</span></div>
+          </article>
+
+          <article class="project-card" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></span>
+              <div class="project-links">
+                <a href="https://github.com/MatmJr/CursoBigData" target="_blank" rel="noopener" class="icon-btn" aria-label="CursoBigData no GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+                </a>
+              </div>
+            </div>
+            <h3>CursoBigData</h3>
+            <p>Slides, notebooks e código usados nas aulas de Big Data — o repositório com mais estrelas no meu GitHub.</p>
+            <div class="project-tags"><span>Docência</span><span>PySpark</span><span>Jupyter</span></div>
+          </article>
+
+        </div>
+
+        <div class="projects-more">
+          <a href="https://github.com/MatmJr" target="_blank" rel="noopener" class="btn btn-outline">
+            Ver todos os repositórios no GitHub
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STUDIES ============ -->
+    <section id="studies">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Estudos</span>
+          <h2 class="section-title">Notas de estudo</h2>
+          <p class="section-lede">Guias longos que juntam a teoria com código funcionando, construído passo a passo.</p>
+        </div>
+
+        <article class="study-card" data-reveal>
+          <div>
+            <span class="study-meta">Guia · Python · demonstração interativa</span>
+            <h3>A pilha de areia: criticalidade auto-organizada em Python</h3>
+            <p>
+              Grãos caem um a um até que um único grão possa não fazer nada ou derrubar metade do
+              tabuleiro. O guia apresenta o modelo de Bak–Tang–Wiesenfeld, a estatística das
+              avalanches e a propriedade abeliana, e depois constrói uma animação que pausa quando o
+              risco de uma avalanche catastrófica fica alto.
+            </p>
+            <div class="project-tags"><span>Física estatística</span><span>Python</span><span>SOLID</span><span>Matplotlib</span></div>
+            <a href="./studies/index.html" class="btn btn-primary">
+              Ler o guia
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+          <a class="study-preview" href="./studies/index.html" tabindex="-1" aria-hidden="true">
+            <img src="./assets/images/sandpile-preview.svg" alt="" width="240" height="240">
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Contato</span>
+          <h2 class="section-title">Vamos conversar</h2>
+          <p class="section-lede">Aberto a conversas sobre arquitetura de dados, IA agêntica, pesquisa em confiabilidade ou docência.</p>
+        </div>
+
+        <div class="contact-grid">
+          <a class="contact-card" href="mailto:marcomialaret@gmail.com" data-reveal>
+            <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></span>
+            <h4>E-mail</h4>
+            <p>marcomialaret@gmail.com</p>
+          </a>
+          <a class="contact-card" href="https://www.linkedin.com/in/marco-mialaret-junior/" target="_blank" rel="noopener" data-reveal>
+            <span class="icon-box"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.4 20.4h-3.5v-5.6c0-1.3 0-3-1.9-3s-2.1 1.5-2.1 3v5.6H9.4V9h3.4v1.6c.5-.9 1.7-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.1zM5.3 7.4A2 2 0 1 1 5.3 3.4a2 2 0 0 1 0 4zM7 20.4H3.6V9H7v11.4z"/></svg></span>
+            <h4>LinkedIn</h4>
+            <p>marco-mialaret-junior</p>
+          </a>
+          <a class="contact-card" href="https://github.com/MatmJr" target="_blank" rel="noopener" data-reveal>
+            <span class="icon-box"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1.1-.3 3.4 1.3a12 12 0 0 1 6.2 0c2.3-1.6 3.4-1.3 3.4-1.3.7 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></span>
+            <h4>GitHub</h4>
+            <p>github.com/MatmJr</p>
+          </a>
+          <a class="contact-card" href="https://www.google.com/maps/place/Recife" target="_blank" rel="noopener" data-reveal>
+            <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <h4>Localização</h4>
+            <p>Recife, Pernambuco, Brasil</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; <span data-year>2026</span> Marco Mialaret Júnior. Feito com HTML, CSS &amp; JS puros.
+    </div>
+  </footer>
+
+  <script src="./assets/js/script.js"></script>
+</body>
+
+</html>

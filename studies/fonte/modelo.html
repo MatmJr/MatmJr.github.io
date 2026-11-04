@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A pilha de areia — Marco Mialaret Júnior</title>
+<link rel="alternate" hreflang="en" href="en.html">
+<link rel="shortcut icon" href="../assets/images/logo.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<!--MODELO: removido pelo gerar.py-->
+<p style="margin:0;padding:12px 16px;background:#b8321e;color:#fff;font:600 15px/1.4 system-ui,sans-serif">Este arquivo é o modelo do guia, com marcadores no lugar do código. Abra <b>studies/index.html</b>, gerado por <b>python studies/fonte/gerar.py</b>.</p>
+<!--/MODELO-->
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a href="../pt.html" class="brand">Marco Mialaret<span class="dot">.</span></a>
+
+    <nav class="nav-links" data-nav-links>
+      <a href="../pt.html#about">Sobre</a>
+      <a href="../pt.html#resume">Currículo</a>
+      <a href="../pt.html#publications">Publicações</a>
+      <a href="../pt.html#projects">Projetos</a>
+      <a href="../pt.html#studies" class="active">Estudos</a>
+      <a href="../pt.html#contact">Contato</a>
+    </nav>
+
+    <div class="topbar-actions">
+      <nav class="lang-switch" aria-label="Idioma">
+        <a href="en.html" lang="en" hreflang="en">EN</a>
+        <a href="index.html" lang="pt" aria-current="page">PT</a>
+      </nav>
+      <button class="icon-btn theme-toggle" data-theme-toggle aria-label="Alternar tema de cores">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" data-nav-toggle aria-label="Abrir navegação" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<header class="abertura">
+  <div class="envoltorio">
+    <div>
+      <p class="rotulo">Criticalidade auto-organizada em Python</p>
+      <h1>A pilha de areia</h1>
+      <p class="lede">Grãos caem um a um num tabuleiro. Quando uma célula junta quatro, ela desaba e passa um grão para cada vizinha, que pode desabar também.</p>
+      <p>Com o tempo, o sistema se ajusta sozinho a um estado em que um único grão pode não fazer nada ou derrubar metade do tabuleiro. Este guia explica a teoria por trás disso e monta, passo a passo, uma animação que pausa quando o risco de uma avalanche catastrófica fica alto e mostra onde ela pode começar.</p>
+      <nav class="indice-rapido" aria-label="Partes do guia">
+        <a href="#teoria">Parte I · Teoria</a>
+        <a href="#construcao">Parte II · Construção do código</a>
+        <a href="#explorar">Parte III · Explorar</a>
+      </nav>
+    </div>
+
+    <div class="demo" aria-labelledby="demo-titulo">
+      <div class="demo-topo">
+        <h2 id="demo-titulo">Experimente</h2>
+        <span class="rotulo">20 × 20 · já no estado crítico</span>
+      </div>
+      <canvas id="tela" tabindex="0" aria-label="Tabuleiro da pilha de areia. Clique numa célula para soltar um grão nela."></canvas>
+      <p class="aviso-alerta" id="aviso" hidden></p>
+      <div class="controles">
+        <button type="button" class="botao primario" id="b-auto">Iniciar</button>
+        <button type="button" class="botao" id="b-grao">Soltar um grão</button>
+        <button type="button" class="botao" id="b-fim">Terminar avalanche</button>
+      </div>
+      <div class="ajustes">
+        <label><input type="checkbox" id="c-monitor" checked> Monitor de risco</label>
+        <label>Catástrofe ≥ <input type="number" id="c-limiar" min="10" max="2000" step="10" value="240"> tombamentos</label>
+        <label>Alerta ≥ <input type="number" id="c-alerta" min="1" max="50" step="1" value="5"> %</label>
+        <label>Velocidade
+          <select id="c-vel">
+            <option value="400">lenta</option>
+            <option value="160" selected>média</option>
+            <option value="60">rápida</option>
+          </select>
+        </label>
+      </div>
+      <dl class="estado" aria-live="polite">
+        <dt>grãos</dt><dd id="e-graos">0</dd>
+        <dt>densidade</dt><dd id="e-dens">0</dd>
+        <dt>avalanche</dt><dd id="e-aval">nenhuma ainda</dd>
+        <dt>risco</dt><dd id="e-risco">desligado</dd>
+      </dl>
+      <div class="legenda">
+        <span><i style="background:#f7f1e3"></i>0</span>
+        <span><i style="background:#e8c872"></i>1</span>
+        <span><i style="background:#c9963b"></i>2</span>
+        <span><i style="background:#7a5320"></i>3 grãos</span>
+        <span><i style="background:rgba(38,89,242,.75)"></i>zona de perigo</span>
+        <span><i style="background:rgba(217,26,26,.9)"></i>tombando agora</span>
+        <span><i style="background:rgba(217,26,26,.35)"></i>já tombou</span>
+      </div>
+      <p class="dica">Clique numa célula para soltar um grão ali. Tente uma célula azul. Com <strong>Iniciar</strong>, os grãos caem sozinhos e a animação pausa quando o alerta começa.</p>
+    </div>
+  </div>
+</header>
+
+<div class="envoltorio corpo">
+  <nav class="sumario" aria-label="Sumário">
+    <details id="sumario-detalhes" open>
+      <summary class="rotulo">Sumário</summary>
+      <ol>
+        <li><a href="#teoria"><b>Parte I · Teoria</b></a></li>
+        <li><a href="#soc">1. Criticalidade auto-organizada</a></li>
+        <li><a href="#modelo">2. O modelo formal</a></li>
+        <li><a href="#avalanches">3. Medindo avalanches</a></li>
+        <li><a href="#estado-critico">4. O estado crítico</a></li>
+        <li><a href="#abeliana">5. A propriedade abeliana</a></li>
+        <li><a href="#caos">6. Crítico não é caótico</a></li>
+        <li><a href="#risco">7. O risco de catástrofe</a></li>
+      </ol>
+      <ol>
+        <li><a href="#construcao"><b>Parte II · Construção</b></a></li>
+        <li><a href="#arquitetura">Arquitetura</a></li>
+        <li><a href="#passo-0">Passo 0 · Ambiente</a></li>
+        <li><a href="#passo-1">Passo 1 · Tabuleiro</a></li>
+        <li><a href="#passo-2">Passo 2 · Sorteio</a></li>
+        <li><a href="#passo-3">Passo 3 · Regra</a></li>
+        <li><a href="#passo-4">Passo 4 · Simulação</a></li>
+        <li><a href="#passo-5">Passo 5 · Aglomerados</a></li>
+        <li><a href="#passo-6">Passo 6 · Monitor de risco</a></li>
+        <li><a href="#passo-7">Passo 7 · Reprodução</a></li>
+        <li><a href="#passo-8">Passo 8 · Animação</a></li>
+        <li><a href="#passo-9">Passo 9 · Juntando tudo</a></li>
+      </ol>
+      <ol>
+        <li><a href="#explorar"><b>Parte III · Explorar</b></a></li>
+        <li><a href="#referencias">Referências</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <article>
+    <!-- ============================== PARTE I ============================== -->
+    <div class="parte" id="teoria">
+      <p class="rotulo">Parte I</p>
+      <h2>Teoria</h2>
+      <p>O que é criticalidade auto-organizada, como o modelo é definido e o que dá para medir e prever nele. Os números citados foram medidos com o próprio código deste guia.</p>
+    </div>
+
+    <section id="soc">
+      <h2 class="titulo"><span class="num">1</span>Criticalidade auto-organizada</h2>
+      <p>Terremotos, incêndios florestais, avalanches de neve, extinções em massa e rajadas de atividade no cérebro têm algo em comum: produzem eventos de todos os tamanhos. Há muitos pequenos, alguns médios e, de vez em quando, um gigantesco. Não existe um tamanho típico. Quando se conta quantos eventos de cada tamanho <var>s</var> aconteceram, o resultado segue uma <strong>lei de potência</strong>:</p>
+      <div class="formula"><var>N</var>(<var>s</var>) ∝ <var>s</var><sup>−<var>τ</var></sup><small>Num gráfico log-log, isso é uma reta de inclinação −τ. A lei de Gutenberg–Richter dos terremotos é desse tipo.</small></div>
+      <p>Na física, leis de potência aparecem nos <strong>pontos críticos</strong> das transições de fase, como a água no ponto crítico ou um ímã na temperatura de Curie. Lá, porém, alguém precisa ajustar a temperatura com precisão. Na natureza ninguém ajusta nada, e mesmo assim as leis de potência estão por toda parte.</p>
+      <p>Em 1987, Per Bak, Chao Tang e Kurt Wiesenfeld propuseram uma explicação: certos sistemas chegam sozinhos ao ponto crítico e ficam lá. Eles chamaram isso de <strong>criticalidade auto-organizada</strong> (SOC, do inglês <em>self-organized criticality</em>). O exemplo que usaram é o deste guia, uma pilha de areia. Quatro ingredientes aparecem em todos os sistemas desse tipo:</p>
+      <ul class="ingredientes">
+        <li><strong>Carga lenta</strong>A energia entra aos poucos, um grão por vez.</li>
+        <li><strong>Limiar local</strong>Nada acontece até uma célula passar de um limite.</li>
+        <li><strong>Relaxação rápida</strong>A célula que passou do limite se descarrega nas vizinhas, e a avalanche termina antes do próximo grão.</li>
+        <li><strong>Dissipação</strong>Algo sai do sistema. Aqui, os grãos que caem pela borda. Sem isso, a pilha cresceria para sempre.</li>
+      </ul>
+    </section>
+
+    <section id="modelo">
+      <h2 class="titulo"><span class="num">2</span>O modelo de Bak–Tang–Wiesenfeld</h2>
+      <p>Considere uma rede quadrada <var>L</var> × <var>L</var>. Cada sítio <var>x</var> = (<var>i</var>, <var>j</var>) guarda um inteiro <var>z</var>(<var>x</var>) ≥ 0, a altura, que é o número de grãos. Os vizinhos de <var>x</var> são os quatro sítios acima, abaixo, à esquerda e à direita. O limiar crítico é <var>z</var><sub>c</sub> = 4, o número de vizinhos. A dinâmica tem três regras:</p>
+      <ol>
+        <li><strong>Carga.</strong> Sorteie <var>x</var> com probabilidade uniforme 1/<var>L</var>² e faça <var>z</var>(<var>x</var>) ← <var>z</var>(<var>x</var>) + 1.</li>
+        <li><strong>Tombamento.</strong> Se algum sítio <var>y</var> tem <var>z</var>(<var>y</var>) ≥ <var>z</var><sub>c</sub>, ele tomba: <var>z</var>(<var>y</var>) ← <var>z</var>(<var>y</var>) − 4, e cada vizinho <var>w</var> dentro da rede recebe um grão, <var>z</var>(<var>w</var>) ← <var>z</var>(<var>w</var>) + 1. O grão que iria para um vizinho fora da rede se perde.</li>
+        <li><strong>Relaxação.</strong> Repita a regra 2 até nenhum sítio ter <var>z</var> ≥ <var>z</var><sub>c</sub>. Só então volte à regra 1.</li>
+      </ol>
+      <p>A regra 3 é a <strong>separação de escalas de tempo</strong>: a carga é infinitamente lenta comparada à avalanche. Um tabuleiro sem sítios instáveis se chama <strong>estável</strong>, e nele toda altura vale 0, 1, 2 ou 3.</p>
+      <p>Em notação matricial, tombar <var>y</var> é subtrair uma coluna da matriz <var>Δ</var>:</p>
+      <div class="formula"><var>z</var> ← <var>z</var> − <var>Δ</var> <var>e</var><sub><var>y</var></sub>, &nbsp; com <var>Δ</var><sub><var>yy</var></sub> = 4 &nbsp;e&nbsp; <var>Δ</var><sub><var>yw</var></sub> = −1 para cada vizinho <var>w</var><small><var>Δ</var> é o laplaciano discreto da rede, e <var>e</var><sub><var>y</var></sub> é o vetor com 1 em <var>y</var> e 0 no resto.</small></div>
+      <p>No interior, um tombamento conserva os grãos: a célula perde 4 e as vizinhas ganham 4. Só na borda o total diminui. É essa dissipação que deixa o sistema chegar a um equilíbrio.</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>No modelo</th><th>No código</th></tr></thead>
+          <tbody>
+            <tr><td>rede <var>L</var> × <var>L</var> com alturas <var>z</var>(<var>x</var>)</td><td><code>Tabuleiro(n)</code></td></tr>
+            <tr><td>limiar <var>z</var><sub>c</sub> = 4</td><td><code>regra.critico</code>, igual a <code>len(vizinhos)</code></td></tr>
+            <tr><td>sortear <var>x</var> e somar 1</td><td><code>Sorteador.escolher</code> e <code>Simulacao.soltar_grao</code></td></tr>
+            <tr><td>tombar <var>y</var></td><td><code>RegraBTW.tombar(tabuleiro, y)</code></td></tr>
+            <tr><td>relaxar até ficar estável</td><td><code>RegraBTW.ondas(tabuleiro)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="avalanches">
+      <h2 class="titulo"><span class="num">3</span>Avalanches: tamanho, área e duração</h2>
+      <p>A sequência de tombamentos disparada por um grão é uma <strong>avalanche</strong>. Três medidas descrevem cada uma:</p>
+      <dl class="medidas">
+        <dt>Tamanho <var>s</var></dt><dd>Número total de tombamentos. Uma célula pode tombar mais de uma vez na mesma avalanche.</dd>
+        <dt>Área <var>a</var></dt><dd>Número de células distintas que tombaram. Sempre <var>a</var> ≤ <var>s</var>.</dd>
+        <dt>Duração <var>T</var></dt><dd>Número de ondas. Numa onda, todas as células instáveis tombam ao mesmo tempo. As que ficaram instáveis por causa delas tombam na onda seguinte.</dd>
+      </dl>
+      <p>A animação mostra cada avalanche onda a onda: vermelho forte para as células tombando agora e vermelho claro para as que já tombaram.</p>
+    </section>
+
+    <section id="estado-critico">
+      <h2 class="titulo"><span class="num">4</span>O estado crítico</h2>
+      <p>Começando do tabuleiro vazio, quase nenhum grão sai pela borda. A densidade média ⟨<var>z</var>⟩ sobe em linha reta e as avalanches são pequenas. Esse é o <strong>transiente</strong>. Depois a densidade para de subir e passa a oscilar em torno de um patamar. A partir daí o sistema está no <strong>estado crítico</strong> e fica nele, sem que ninguém ajuste nada. Num tabuleiro 30 × 30, em 50.000 grãos, medimos:</p>
+      <div class="ficha">
+        <div><b>~2.100</b><span>grãos até o fim do transiente</span></div>
+        <div><b>2,08</b><span>grãos por célula no patamar (rede infinita: ≈ 2,125)</span></div>
+        <div><b>42,5%</b><span>dos grãos disparam alguma avalanche</span></div>
+        <div><b>84,5</b><span>tombamentos por avalanche, em média</span></div>
+      </div>
+      <p>A primeira avalanche gigante costuma aparecer justamente perto do fim do transiente, entre os grãos 1.900 e 2.100: é o momento em que o sistema chega ao estado crítico. Depois disso, a distribuição dos tamanhos segue uma lei de potência até um corte:</p>
+      <div class="formula"><var>P</var>(<var>s</var>) ∼ <var>s</var><sup>−<var>τ</var></sup>, &nbsp; para 1 ≪ <var>s</var> ≪ <var>s</var><sub>c</sub>(<var>L</var>)</div>
+      <p>O corte <var>s</var><sub>c</sub> cresce com o tamanho <var>L</var> do tabuleiro. Comparar <var>L</var> = 16, 32 e 64 e ver o corte se deslocar é a forma clássica de confirmar a criticalidade (<em>finite-size scaling</em>). No 30 × 30 medimos <var>τ</var> ≈ 1,05 a 1,07. Em redes grandes, as estimativas para o BTW em 2D ficam em torno de 1,1 a 1,3, e o valor exato ainda é debatido. Tabuleiros pequenos tendem a subestimar o expoente.</p>
+      <p>Ao montar o histograma, use bins logarítmicos. Com bins lineares, a cauda fica com poucos eventos por bin e vira ruído.</p>
+    </section>
+
+    <section id="abeliana">
+      <h2 class="titulo"><span class="num">5</span>A propriedade abeliana</h2>
+      <p>Em 1990, Deepak Dhar mostrou que o modelo BTW tem uma propriedade forte: <strong>o estado final não depende da ordem em que as células instáveis tombam</strong>. O número de vezes que cada célula tomba também não depende. Escrevendo <var>a</var><sub><var>x</var></sub> para a operação "somar um grão em <var>x</var> e relaxar", vale</p>
+      <div class="formula"><var>a</var><sub><var>x</var></sub> <var>a</var><sub><var>y</var></sub> = <var>a</var><sub><var>y</var></sub> <var>a</var><sub><var>x</var></sub><small>Por isso o modelo também é chamado de pilha de areia abeliana.</small></div>
+      <p>A intuição é simples. Tombar uma célula só acrescenta grãos às vizinhas, e isso nunca impede outra célula instável de tombar. Qualquer ordem válida chega ao mesmo lugar.</p>
+      <div class="nocodigo">
+        <p class="rotulo">No código</p>
+        <p>Duas partes do projeto dependem disso. <code>RegraBTW.ondas</code> tomba todas as células instáveis juntas, em ondas; comparamos com a versão sequencial em 8.000 grãos e os estados finais e tamanhos foram idênticos. O monitor de risco reaproveita a parte comum das avalanches de um aglomerado inteiro (<a href="#risco">seção 7</a>).</p>
+      </div>
+    </section>
+
+    <section id="caos">
+      <h2 class="titulo"><span class="num">6</span>Crítico não é caótico</h2>
+      <p>É tentador chamar a avalanche de caótica, mas o termo técnico não se aplica. Num sistema caótico, uma diferença minúscula cresce exponencialmente até tomar conta de tudo: é o efeito borboleta. A pilha de areia é determinística, dados o tabuleiro e o ponto em que o grão cai, mas uma diferença pequena não se amplifica.</p>
+      <p>Para testar, pegamos dois tabuleiros 30 × 30 idênticos, exceto por um grão a mais em uma célula, e soltamos neles a mesma sequência de 20.000 grãos:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Grãos depois</th><th class="n">Teste 1</th><th class="n">Teste 2</th><th class="n">Teste 3</th></tr></thead>
+          <tbody>
+            <tr><td>100</td><td class="n">143</td><td class="n">1</td><td class="n">1</td></tr>
+            <tr><td>1.000</td><td class="n">181</td><td class="n">17</td><td class="n">76</td></tr>
+            <tr><td>5.000</td><td class="n">10</td><td class="n">27</td><td class="n">122</td></tr>
+            <tr><td>20.000</td><td class="n">41</td><td class="n">206</td><td class="n">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tabela-legenda">Células diferentes, de 900, entre os dois tabuleiros.</p>
+      <p>A diferença sobe e desce, e no teste 3 volta a uma única célula. Em cerca de 90% dos grãos, a avalanche teve exatamente o mesmo tamanho nos dois tabuleiros.</p>
+      <p>O que existe é <strong>sensibilidade ao ponto de disparo</strong>: em 119 de 870 pares de células vizinhas, um grão numa delas causa no máximo 5 tombamentos e na outra pelo menos 100. O tabuleiro fica no limiar, cheio de regiões prestes a desabar, e a imprevisibilidade vem dessa estrutura somada ao sorteio do grão.</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th></th><th>Caos</th><th>Criticalidade auto-organizada</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Pequena perturbação</strong></td><td>cresce exponencialmente, sempre</td><td>às vezes não faz nada, às vezes muda um evento, mas não toma conta do sistema</td></tr>
+            <tr><td><strong>Estatística típica</strong></td><td>escala característica</td><td>lei de potência: eventos de todos os tamanhos</td></tr>
+            <tr><td><strong>Origem</strong></td><td>dinâmica interna não linear</td><td>carga lenta num sistema com limiar e dissipação</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="risco">
+      <h2 class="titulo"><span class="num">7</span>Dá para prever? O risco de catástrofe</h2>
+      <p>Escolha um tamanho <var>s</var>* a partir do qual uma avalanche conta como catástrofe. Para um tabuleiro estável <var>z</var>, seja <var>s</var><sub><var>x</var></sub>(<var>z</var>) o tamanho da avalanche que aconteceria se o próximo grão caísse em <var>x</var>. Como a dinâmica é determinística, esse número pode ser calculado de antemão, simulando num tabuleiro hipotético. A <strong>zona de perigo</strong> e o <strong>risco</strong> são:</p>
+      <div class="formula"><var>Z</var>(<var>z</var>) = { <var>x</var> : <var>s</var><sub><var>x</var></sub>(<var>z</var>) ≥ <var>s</var>* } &nbsp;&nbsp;&nbsp; <var>R</var>(<var>z</var>) = |<var>Z</var>(<var>z</var>)| / <var>L</var>²</div>
+      <p>Com sorteio uniforme, <var>R</var>(<var>z</var>) é exatamente a probabilidade de o próximo grão causar uma catástrofe. A animação calcula <var>R</var> antes de cada grão, pinta <var>Z</var> de azul e pausa quando <var>R</var> passa de um limite.</p>
+
+      <h3>O lema do aglomerado</h3>
+      <p>Chame de <strong>aglomerado</strong> um conjunto conexo <var>C</var> de células com <var>z</var> = 3, ou seja, a um grão de tombar. Se o grão cai em <var>c</var> ∈ <var>C</var>, <strong>toda célula de <var>C</var> tomba pelo menos uma vez</strong>.</p>
+      <p>A prova é curta. A célula <var>c</var> vai a 4 e tomba. Cada vizinha de <var>c</var> que está em <var>C</var> recebe um grão, vai a 4 e tomba também. Repetindo o argumento ao longo de qualquer caminho dentro de <var>C</var>, todas tombam.</p>
+
+      <h3>O atalho</h3>
+      <p>Pela propriedade abeliana, dá para tombar <var>C</var> inteiro primeiro e só depois continuar. Para qualquer <var>c</var> ∈ <var>C</var>:</p>
+      <div class="formula"><var>s</var><sub><var>c</var></sub> = |<var>C</var>| + <var>S</var><sub><var>C</var></sub> + <var>r</var><sub><var>c</var></sub></div>
+      <p><var>S</var><sub><var>C</var></sub> é o número de tombamentos necessários para estabilizar o tabuleiro depois de tombar <var>C</var> uma vez. Esse número é igual para todas as células de <var>C</var>. Só <var>r</var><sub><var>c</var></sub>, o que o grão extra ainda provoca no fim, depende de <var>c</var>, e costuma ser pequeno. Assim basta uma simulação grande por aglomerado, em vez de uma por célula. No 30 × 30, a avaliação caiu de 83 ms para 19 ms, com resultado idêntico, conferido em 27.000 células.</p>
+
+      <h3>A previsão funciona?</h3>
+      <p>Rodamos 12.000 grãos num 30 × 30, com catástrofe definida como avalanche de pelo menos 550 tombamentos (cerca de 1% das avalanches) e alerta em <var>R</var> ≥ 5%:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Chance prevista</th><th class="n">Grãos</th><th class="n">Previsto (média)</th><th class="n">Aconteceu</th></tr></thead>
+          <tbody>
+            <tr><td>0%</td><td class="n">6.366</td><td class="n">0%</td><td class="n">0%</td></tr>
+            <tr><td>até 2%</td><td class="n">1.236</td><td class="n">1,04%</td><td class="n">1,29%</td></tr>
+            <tr><td>de 2% a 5%</td><td class="n">1.175</td><td class="n">3,28%</td><td class="n">3,06%</td></tr>
+            <tr class="destaque"><td>acima de 5% (alerta)</td><td class="n">723</td><td class="n">7,15%</td><td class="n">7,61%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A chance prevista bate com a frequência real. Mais da metade das catástrofes (55 de 107) aconteceu com o alerta ligado, e nenhuma aconteceu quando a chance prevista era zero. Mesmo com o alerta ligado, porém, cerca de 92% dos grãos caem fora da zona azul. É uma previsão de risco, como os mapas de risco sísmico: diz onde e com que probabilidade, mas não diz quando.</p>
+    </section>
+
+    <!-- ============================== PARTE II ============================== -->
+    <div class="parte" id="construcao">
+      <p class="rotulo">Parte II</p>
+      <h2>Construção do código</h2>
+      <p>Nove passos, na ordem das dependências: cada peça usa apenas as que vieram antes. Cada passo termina com um trecho para conferir se está tudo certo; a saída mostrada é a real, gerada pelo próprio código.</p>
+    </div>
+
+    <section id="arquitetura">
+      <h2 class="titulo">Arquitetura</h2>
+      <p>O código fica num pacote <code>pilha_de_areia</code>, com um módulo por responsabilidade. O <code>main.py</code> só monta as peças.</p>
+<pre class="arvore">SOC/
+├── main.py              <b>Passo 9</b>  monta as peças e abre a animação
+└── pilha_de_areia/
+    ├── __init__.py      <b>Passo 0</b>  vazio até o Passo 9
+    ├── tabuleiro.py     <b>Passo 1</b>  estado da grade e o tabuleiro hipotético
+    ├── sorteio.py       <b>Passo 2</b>  onde o grão cai
+    ├── regras.py        <b>Passo 3</b>  como as células tombam
+    ├── simulacao.py     <b>Passo 4</b>  um passo da simulação
+    ├── indicadores.py   <b>Passo 5</b>  aglomerados de células críticas
+    ├── risco.py         <b>Passo 6</b>  mapa de risco e zona de perigo
+    ├── reproducao.py    <b>Passo 7</b>  ritmo da animação e alertas
+    └── visualizacao.py  <b>Passo 8</b>  desenho e teclado</pre>
+      <p>As dependências formam camadas. Quem está em cima usa quem está embaixo, nunca o contrário:</p>
+      <div class="camadas" role="img" aria-label="Camadas: main.py usa AnimacaoPilha, que usa ReproducaoEmOndas, que usa Simulacao e MonitorDeRisco, que usam Sorteador, RegraTombamento e Tabuleiro.">
+        <div class="camada"><div class="peca"><code>main.py</code><span>cria as peças e as injeta</span></div></div>
+        <div class="seta">usa ↓</div>
+        <div class="camada"><div class="peca"><code>AnimacaoPilha</code><span>desenha e trata o teclado</span></div></div>
+        <div class="seta">usa ↓</div>
+        <div class="camada"><div class="peca"><code>ReproducaoEmOndas</code><span>dita o ritmo e dispara alertas</span></div></div>
+        <div class="seta">usa ↓</div>
+        <div class="camada">
+          <div class="peca"><code>Simulacao</code><span>solta grãos e relaxa</span></div>
+          <div class="peca"><code>MonitorDeRisco</code><span>calcula a zona de perigo</span></div>
+        </div>
+        <div class="seta">usa ↓</div>
+        <div class="camada">
+          <div class="peca base"><code>Sorteador</code><span>abstração</span></div>
+          <div class="peca base"><code>RegraTombamento</code><span>abstração</span></div>
+          <div class="peca"><code>Tabuleiro</code><span>estado</span></div>
+        </div>
+      </div>
+      <h3>Onde entra cada princípio SOLID</h3>
+      <div class="solid">
+        <b>S</b><p><strong>Responsabilidade única.</strong> Cada classe tem um motivo para mudar: o tabuleiro guarda estado, a regra tomba, a reprodução dita o ritmo, a animação desenha.</p>
+        <b>O</b><p><strong>Aberto/fechado.</strong> Comportamento novo entra como classe nova, como <code>RegraBTW(VIZINHANCA_8)</code> ou <code>SorteioCentro()</code>, sem editar a <code>Simulacao</code>.</p>
+        <b>L</b><p><strong>Substituição de Liskov.</strong> <code>TabuleiroHipotetico</code> substitui <code>Tabuleiro</code> em qualquer lugar. A regra roda nele sem saber que é uma hipótese, e é assim que o monitor simula "e se o grão cair aqui?".</p>
+        <b>I</b><p><strong>Segregação de interfaces.</strong> As interfaces são pequenas: <code>Sorteador</code> só tem <code>escolher</code>; <code>RegraTombamento</code> tem <code>tombar</code> e <code>ondas</code>.</p>
+        <b>D</b><p><strong>Inversão de dependência.</strong> <code>Simulacao</code> e <code>MonitorDeRisco</code> dependem das abstrações. As peças concretas são criadas no <code>main.py</code> e passadas pelo construtor.</p>
+      </div>
+    </section>
+
+    <section id="passo-0">
+      <h2 class="titulo"><span class="num">Passo 0</span>Ambiente</h2>
+      <ul>
+        <li>Python 3.10 ou mais novo. O código usa anotações como <code>int | None</code> e <code>list[int]</code>.</li>
+        <li>Instale o matplotlib, que traz o numpy junto: <code>pip install matplotlib</code>.</li>
+        <li>Crie a pasta <code>SOC/pilha_de_areia/</code> com um arquivo <code>__init__.py</code> <strong>vazio</strong>. Ele marca a pasta como pacote. Só no Passo 9 ele ganha conteúdo; se você preenchê-lo antes, os testes dos passos intermediários vão falhar, porque ele tentaria importar arquivos que ainda não existem.</li>
+        <li>Para rodar os trechos "Confira", salve cada um num arquivo, por exemplo <code>confere.py</code>, na pasta <code>SOC</code>, e rode <code>python confere.py</code>.</li>
+      </ul>
+    </section>
+
+    <section id="passo-1">
+      <h2 class="titulo"><span class="num">Passo 1</span>O tabuleiro</h2>
+      <p>A rede <var>L</var> × <var>L</var> do <a href="#modelo">modelo</a>. O <code>Tabuleiro</code> só guarda quantos grãos há em cada célula e não sabe nada sobre sorteio ou avalanches.</p>
+      <ul>
+        <li><code>Posicao = tuple[int, int]</code> é só um apelido, para deixar as anotações legíveis.</li>
+        <li><code>__getitem__</code> permite escrever <code>tabuleiro[(i, j)]</code>.</li>
+        <li><code>adicionar</code> aceita quantidade negativa. É assim que a regra vai tirar 4 grãos de uma célula.</li>
+        <li><code>posicoes()</code> é um gerador: percorre as células sem montar uma lista.</li>
+        <li><code>como_matriz()</code> devolve uma cópia, para que quem desenha não altere o estado por engano.</li>
+      </ul>
+      <p>O <code>TabuleiroHipotetico</code> é a peça que torna o monitor de risco viável. Ele lê do tabuleiro original e guarda só as diferenças num dicionário. Simular uma avalanche nele custa proporcional ao tamanho da avalanche, não ao do tabuleiro, e o original não muda. Ele sobrescreve <code>total</code> e <code>como_matriz</code> para continuar se comportando como um <code>Tabuleiro</code> de verdade (o L do SOLID).</p>
+      @@ARQUIVO pilha_de_areia/tabuleiro.py@@
+      <p><strong>Confira:</strong></p>
+      @@CONFIRA passo1@@
+    </section>
+
+    <section id="passo-2">
+      <h2 class="titulo"><span class="num">Passo 2</span>O sorteio</h2>
+      <p>A regra 1 do modelo, "sorteie <var>x</var>", vira uma abstração com um único método. <code>Sorteador</code> herda de <code>ABC</code> e marca <code>escolher</code> com <code>@abstractmethod</code>: o Python não deixa criar um <code>Sorteador</code> diretamente, só as classes concretas.</p>
+      <p><code>SorteioUniforme</code> recebe o gerador aleatório pelo construtor. Com <code>random.Random(42)</code>, a sequência de grãos se repete sempre igual, o que é essencial para reproduzir um experimento. <code>SorteioCentro</code> solta tudo no meio e gera o padrão fractal clássico da pilha de areia.</p>
+      @@ARQUIVO pilha_de_areia/sorteio.py@@
+      <p><strong>Confira:</strong></p>
+      @@CONFIRA passo2@@
+    </section>
+
+    <section id="passo-3">
+      <h2 class="titulo"><span class="num">Passo 3</span>A regra de tombamento</h2>
+      <p>As regras 2 e 3 do modelo. A interface <code>RegraTombamento</code> declara dois métodos, e <code>RegraBTW</code> os implementa:</p>
+      <ul>
+        <li><code>tombar(tabuleiro, pos)</code> é a regra 2 para uma célula: tira <code>critico</code> grãos e dá 1 a cada vizinho dentro do tabuleiro. Devolve quem recebeu grão.</li>
+        <li><code>ondas(tabuleiro, candidatas)</code> é a regra 3. É um <strong>gerador</strong>: cada <code>yield</code> entrega uma onda e pausa a função até alguém pedir a próxima. É isso que deixa a animação mostrar uma onda por quadro.</li>
+        <li><code>candidatas</code> diz onde procurar células instáveis no início. Depois de soltar um grão, só a célula onde ele caiu pode ter ficado instável, então não é preciso varrer o tabuleiro inteiro.</li>
+        <li>Dentro do laço, <code>tocadas</code> junta quem tombou e quem recebeu grão. Só elas podem ter ficado instáveis para a onda seguinte.</li>
+      </ul>
+      <p>O limiar <code>critico</code> é calculado como o número de vizinhos. Assim nenhum grão é criado ou destruído no interior, como exige o <a href="#modelo">modelo</a>.</p>
+      @@ARQUIVO pilha_de_areia/regras.py@@
+      <p><strong>Confira</strong> num tabuleiro 3 × 3: a célula do meio passa do limite, e as quatro vizinhas estão a um grão de tombar.</p>
+      @@CONFIRA passo3@@
+      <p>A célula do meio tomba duas vezes, na onda 1 e na onda 3. Essa avalanche tem tamanho 6, área 5 e duração 3, um exemplo de por que a área pode ser menor que o tamanho.</p>
+    </section>
+
+    <section id="passo-4">
+      <h2 class="titulo"><span class="num">Passo 4</span>A simulação</h2>
+      <p><code>Avalanche</code> é uma <code>dataclass</code> que guarda a origem e a lista de ondas. As três medidas da <a href="#avalanches">seção 3</a> viram propriedades: <code>tamanho</code>, <code>area</code> e <code>duracao</code>.</p>
+      <p><code>Simulacao</code> recebe tabuleiro, sorteador e regra prontos pelo construtor (o D do SOLID). Ela oferece três operações: <code>soltar_grao</code> (a regra 1), <code>ondas</code> (relaxar aos poucos, para a animação) e <code>passo</code> (soltar e relaxar de uma vez).</p>
+      <p>O arquivo também define <code>Observador</code>, usado no monitoramento estatístico que grava cada evento em CSV. A animação não precisa dele, mas não atrapalha mantê-lo.</p>
+      @@ARQUIVO pilha_de_areia/simulacao.py@@
+      <p><strong>Confira</strong> a conservação: os grãos no tabuleiro devem ser exatamente os soltos menos os que caíram pela borda.</p>
+      @@CONFIRA passo4@@
+    </section>
+
+    <section id="passo-5">
+      <h2 class="titulo"><span class="num">Passo 5</span>Os aglomerados</h2>
+      <p>O <a href="#risco">lema do aglomerado</a> precisa encontrar as regiões conexas de células a um grão de tombar. <code>aglomerados</code> faz uma busca em profundidade com uma pilha: parte de uma célula crítica ainda não visitada e vai juntando as vizinhas críticas até não sobrar nenhuma. As outras funções do arquivo (densidade, fração de células críticas e maior aglomerado) são indicadores usados no monitoramento estatístico.</p>
+      @@ARQUIVO pilha_de_areia/indicadores.py@@
+      <p><strong>Confira</strong> o lema num tabuleiro no estado crítico: um grão em qualquer célula de um aglomerado derruba o aglomerado inteiro.</p>
+      @@CONFIRA passo5@@
+    </section>
+
+    <section id="passo-6">
+      <h2 class="titulo"><span class="num">Passo 6</span>O monitor de risco</h2>
+      <p>A <a href="#risco">seção 7</a> transformada em código:</p>
+      <ul>
+        <li><code>tamanho_se_cair(tabuleiro, pos)</code> calcula <var>s</var><sub><var>x</var></sub>: cria um <code>TabuleiroHipotetico</code>, soma um grão em <code>pos</code> e conta os tombamentos da regra. O tabuleiro real não muda.</li>
+        <li><code>_tamanhos_no_aglomerado</code> é o atalho <var>s</var><sub><var>c</var></sub> = |<var>C</var>| + <var>S</var><sub><var>C</var></sub> + <var>r</var><sub><var>c</var></sub>: tomba o aglomerado uma vez num tabuleiro hipotético <code>comum</code>, estabiliza, e só então calcula a sobra de cada célula. O hipotético da sobra é montado em cima do <code>comum</code>, um "e se" dentro de outro.</li>
+        <li><code>avaliar</code> junta tudo e devolve um <code>Risco</code> com o mapa, a zona <var>Z</var>, a chance <var>R</var> e se há alerta.</li>
+      </ul>
+      <p>Células com menos de 3 grãos ficam de fora do mapa: um grão nelas não derruba nada.</p>
+      @@ARQUIVO pilha_de_areia/risco.py@@
+      <p><strong>Confira</strong> o atalho contra uma simulação de verdade, feita numa cópia do tabuleiro:</p>
+      @@CONFIRA passo6@@
+    </section>
+
+    <section id="passo-7">
+      <h2 class="titulo"><span class="num">Passo 7</span>A reprodução em ondas</h2>
+      <p>Sem esta peça, a animação seria rápida demais para um humano acompanhar. <code>ReproducaoEmOndas</code> decide quanto a simulação avança em cada quadro e não desenha nada, por isso dá para testá-la sem janela. Ela alterna entre dois estados:</p>
+      <div class="estados" role="img" aria-label="Dois estados: soltando grãos e avalanche. Um grão que dispara avalanche leva ao estado avalanche; quando ela termina, volta a soltar grãos. Um alerta novo para antes de soltar o grão.">
+        <div class="peca"><code>soltando grãos</code><span>até 20 por quadro; avalia o risco antes de cada um</span></div>
+        <div class="seta">um grão dispara →<br>← a avalanche termina</div>
+        <div class="peca"><code>avalanche</code><span>uma onda por quadro</span></div>
+      </div>
+      <p>Antes de cada grão, <code>_avaliar_risco</code> consulta o monitor. Se o alerta <strong>acabou de começar</strong>, a reprodução para antes de soltar o grão e liga <code>alerta_novo</code>, que a animação usa para pausar. Enquanto o alerta continua, ela não pausa de novo. <code>_estado_avaliado</code> evita recalcular o risco do mesmo tabuleiro quando você retoma depois de uma pausa.</p>
+      @@ARQUIVO pilha_de_areia/reproducao.py@@
+      <p><strong>Confira</strong>, sem janela nenhuma, quando o primeiro alerta aparece num 30 × 30:</p>
+      @@CONFIRA passo7@@
+    </section>
+
+    <section id="passo-8">
+      <h2 class="titulo"><span class="num">Passo 8</span>A animação</h2>
+      <p><code>AnimacaoPilha</code> só desenha e trata o teclado. O tabuleiro é feito de camadas de <code>imshow</code> sobrepostas, na ordem em que são criadas:</p>
+      <ol>
+        <li>os grãos, com uma cor por altura;</li>
+        <li>a zona de perigo, em azul semitransparente;</li>
+        <li>a avalanche, em vermelho claro para quem já tombou e forte para quem tomba agora;</li>
+        <li>um X preto onde caiu o último grão.</li>
+      </ol>
+      <p>À direita ficam dois gráficos: o tamanho das avalanches e a chance de catástrofe antes de cada grão, com o limite de alerta tracejado e as catástrofes reais em vermelho.</p>
+      <p><code>FuncAnimation</code> chama <code>_quadro</code> a cada intervalo. O quadro avança a reprodução, pausa se <code>alerta_novo</code> estiver ligado e redesenha. Guarde a animação em <code>self._anim</code>: sem uma referência viva, o Python a recolhe da memória e a janela congela.</p>
+      @@ARQUIVO pilha_de_areia/visualizacao.py@@
+    </section>
+
+    <section id="passo-9">
+      <h2 class="titulo"><span class="num">Passo 9</span>Juntando tudo</h2>
+      <p>Agora que todos os módulos existem, preencha o <code>__init__.py</code>. Ele reexporta as classes para que o resto do código possa escrever <code>from pilha_de_areia import Tabuleiro</code>:</p>
+      @@CODIGO init@@
+      <p>O <code>main.py</code> monta as peças e as entrega umas às outras. É o único lugar que conhece as classes concretas:</p>
+      @@CODIGO main@@
+      <p>Rode <code>python main.py</code>. No estado crítico, a animação pausa sozinha quando a chance de catástrofe passa do limite, com a zona de perigo em azul e o título em vermelho. Os controles são:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Tecla</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td><kbd>espaço</kbd></td><td>pausa ou continua</td></tr>
+            <tr><td><kbd>n</kbd></td><td>avança um quadro, com a animação pausada</td></tr>
+            <tr><td><kbd>+</kbd> / <kbd>−</kbd></td><td>mais rápido ou mais devagar, de 800 ms a 25 ms por quadro</td></tr>
+            <tr><td><kbd>enter</kbd></td><td>termina a avalanche atual de uma vez</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Escolhendo os dois limites</h3>
+      <p><code>tamanho_catastrofico</code> define o que conta como catástrofe, e <code>chance_alerta</code>, a partir de que risco a animação pausa. Os dois precisam combinar: se a chance média de catástrofe já é maior que o limite de alerta, o alerta fica ligado quase o tempo todo. No 30 × 30:</p>
+      <div class="tabela">
+        <table>
+          <thead><tr><th class="n">tamanho_catastrofico</th><th class="n">grãos que causam catástrofe</th><th>com chance_alerta = 0.05</th></tr></thead>
+          <tbody>
+            <tr><td class="n">550</td><td class="n">1,1%</td><td>alertas raros, só nos estados mais perigosos (≈ 5 vezes a média)</td></tr>
+            <tr><td class="n">150</td><td class="n">7,4%</td><td>a média já passa do limite, então o alerta fica ligado na maior parte do tempo; suba <code>chance_alerta</code> para algo como 0.2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Para outro tamanho de tabuleiro, meça a distribuição dos tamanhos primeiro e escolha <code>tamanho_catastrofico</code> perto do percentil 99. No 20 × 20 da demonstração acima, esse valor é cerca de 240.</p>
+    </section>
+
+    <!-- ============================== PARTE III ============================== -->
+    <div class="parte" id="explorar">
+      <p class="rotulo">Parte III</p>
+      <h2>Explorar</h2>
+      <p>Com as peças separadas, cada experimento abaixo muda uma linha do <code>main.py</code> ou acrescenta uma classe nova.</p>
+    </div>
+
+    <section id="experimentos">
+      <h2 class="titulo">Experimentos de uma linha</h2>
+      <ul>
+        <li><strong>O fractal.</strong> <code>Simulacao(Tabuleiro(101), SorteioCentro(), regra)</code> solta todos os grãos no centro e desenha o padrão fractal da pilha de areia. Passe <code>monitor=None</code> para a reprodução: o cálculo de chance supõe sorteio uniforme e não vale aqui.</li>
+        <li><strong>Oito vizinhos.</strong> <code>RegraBTW(VIZINHANCA_8)</code> inclui as diagonais. O limiar passa a 8 automaticamente e a lista de cores já tem oito tons.</li>
+        <li><strong>Tamanho do tabuleiro.</strong> Tabuleiros maiores têm avalanches maiores e um expoente <var>τ</var> mais próximo do da literatura, mas o monitor de risco fica mais lento, porque há mais células para avaliar.</li>
+      </ul>
+      <h3>Exercícios</h3>
+      <ol>
+        <li>Guarde a duração <var>T</var> de cada avalanche e faça o histograma log-log. Ela também segue uma lei de potência?</li>
+        <li>Conte quantas vezes cada célula tombou ao longo de 50.000 grãos e desenhe esse mapa. Por que o centro é mais ativo que as bordas?</li>
+        <li>Escreva uma <code>RegraTombamento</code> nova em que a célula perde 4 grãos mas só passa 3 adiante, perdendo um no caminho. Sem mexer na <code>Simulacao</code>, verifique se a lei de potência continua ou se aparece um tamanho típico de avalanche.</li>
+        <li>Mude o <code>Sorteador</code> para soltar grãos com mais frequência numa região. O que acontece com a zona de perigo? O cálculo de chance continua valendo?</li>
+      </ol>
+    </section>
+
+    <section id="referencias">
+      <h2 class="titulo">Referências</h2>
+      <ul>
+        <li>P. Bak, C. Tang e K. Wiesenfeld, "Self-organized criticality: An explanation of the 1/f noise", <em>Physical Review Letters</em> 59, 381 (1987). O artigo que propôs o modelo.</li>
+        <li>D. Dhar, "Self-organized critical state of sandpile automaton models", <em>Physical Review Letters</em> 64, 1613 (1990). A propriedade abeliana.</li>
+        <li>P. Bak, <em>How Nature Works: The Science of Self-Organized Criticality</em> (1996). Introdução sem matemática pesada.</li>
+        <li>H. J. Jensen, <em>Self-Organized Criticality: Emergent Complex Behavior in Physical and Biological Systems</em> (1998).</li>
+        <li>G. Pruessner, <em>Self-Organised Criticality: Theory, Models and Characterisation</em> (2012). Referência técnica completa, incluindo a discussão sobre os expoentes do BTW.</li>
+      </ul>
+    </section>
+  </article>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="nota-rodape">Os números deste guia foram medidos com o próprio código, num tabuleiro 30 × 30 salvo indicação em contrário. As saídas dos trechos "Confira" foram geradas rodando cada trecho.</p>
+    &copy; <span data-year>2026</span> Marco Mialaret Júnior. Feito com HTML, CSS &amp; JS puros.
+  </div>
+</footer>
+
+<script src="../assets/js/script.js"></script>
+<script src="guia.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

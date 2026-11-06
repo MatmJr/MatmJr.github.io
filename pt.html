@@ -1,3 +1,8 @@
+---
+# Este cabeçalho faz o Jekyll processar esta página só para montar a seção de aulas
+# (os blocos {% %} abaixo). Num preview estático, essa seção aparece com o código cru.
+layout: null
+---
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -31,6 +36,7 @@
         <a href="#publications" data-nav-link>Publicações</a>
         <a href="#projects" data-nav-link>Projetos</a>
         <a href="#studies" data-nav-link>Estudos</a>
+        <a href="#courses" data-nav-link>Aulas</a>
         <a href="#contact" data-nav-link>Contato</a>
       </nav>
 
@@ -468,6 +474,47 @@
             <img src="./assets/images/sandpile-preview.svg" alt="" width="240" height="240">
           </a>
         </article>
+      </div>
+    </section>
+
+    <!-- ============ COURSES (montada pelo Jekyll a partir de aulas/) ============ -->
+    {%- assign semestres = site.pages | where: "layout", "disciplina" | group_by: "semestre" | sort: "name" | reverse %}
+    {%- assign atual = semestres | first %}
+    <section id="courses">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Aulas</span>
+          <h2 class="section-title">Material de aula</h2>
+          {%- if atual %}
+          <p class="section-lede">Slides, notebooks e exercícios das disciplinas que leciono. Abaixo, as do semestre {{ atual.name }}.</p>
+          {%- endif %}
+        </div>
+
+        {%- if atual %}
+        <div class="project-grid">
+          {%- assign disciplinas = atual.items | sort: "title" %}
+          {%- for d in disciplinas %}
+          {%- assign pasta = d.path | remove: d.name %}
+          {%- assign aulas = site.pages | where_exp: "p", "p.layout == 'aula'" | where_exp: "p", "p.path contains pasta" %}
+          <a class="project-card" href="{{ d.url | relative_url }}" data-reveal>
+            <div class="project-card-top">
+              <span class="project-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+              <span class="study-meta">{% if aulas.size == 1 %}1 aula{% else %}{{ aulas.size }} aulas{% endif %}</span>
+            </div>
+            <h3>{{ d.title }}</h3>
+            {%- if d.descricao %}<p>{{ d.descricao }}</p>{% endif %}
+            <div class="project-tags"><span>{{ atual.name }}</span>{% if d.instituicao %}<span>{{ d.instituicao }}</span>{% endif %}</div>
+          </a>
+          {%- endfor %}
+        </div>
+        {%- endif %}
+
+        <div class="projects-more">
+          <a href="{{ '/aulas/' | relative_url }}" class="btn btn-outline">
+            Ver todo o material de aula
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
       </div>
     </section>
 

@@ -1,0 +1,27 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Aulas — {{ site.title }}</title>
+    <link>{{ '/aulas/' | absolute_url }}</link>
+    <description>Novas aulas publicadas: slides, notebooks e exercícios.</description>
+    <language>pt-BR</language>
+    {%- assign aulas = site.pages | where_exp: "p", "p.layout == 'aula'" | where_exp: "p", "p.date" | sort: "date" | reverse %}
+    {%- for a in aulas limit: 30 %}
+    {%- assign pasta = a.path | remove: a.name %}
+    {%- assign indice = pasta | append: "index.md" %}
+    {%- assign disciplina = site.pages | where: "path", indice | first %}
+    <item>
+      <title>{% if disciplina %}{{ disciplina.title | xml_escape }}: {% endif %}{{ a.title | xml_escape }}</title>
+      <link>{{ a.url | absolute_url }}</link>
+      <guid>{{ a.url | absolute_url }}</guid>
+      <pubDate>{{ a.date | date_to_rfc822 }}</pubDate>
+      {%- if a.resumo %}
+      <description>{{ a.resumo | xml_escape }}</description>
+      {%- endif %}
+    </item>
+    {%- endfor %}
+  </channel>
+</rss>

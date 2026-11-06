@@ -1,0 +1,31 @@
+{
+  // Ctrl+Shift+P → "Tasks: Run Task" → "Pré-visualizar site (Jekyll)", e abra http://localhost:4000
+  // Precisa do Docker Desktop aberto. A página recarrega sozinha ao salvar um arquivo.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pré-visualizar site (Jekyll)",
+      "type": "shell",
+      "options": {
+        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+      },
+      "command": "docker rm -f jekyll-preview *>$null; docker run --rm --name jekyll-preview -p 4000:4000 -p 35729:35729 -v \"${workspaceFolder}:/srv/site\" -v jekyll-gems:/usr/local/bundle -w /srv/site ruby:3.3 sh -c 'bundle install --quiet && bundle exec jekyll serve --host 0.0.0.0 --livereload --force_polling'",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "jekyll",
+        "pattern": { "regexp": "^\\s*(Error|Liquid Exception):\\s*(.*)$", "message": 2 },
+        "background": {
+          "activeBegin": "Generating\\.\\.\\.|Regenerating:",
+          "activeEnd": "Server running|\\.\\.\\.done in"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Parar pré-visualização",
+      "type": "shell",
+      "command": "docker rm -f jekyll-preview",
+      "presentation": { "reveal": "silent" }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+# gerados pelo preview local do Jekyll (o GitHub Pages monta o site sozinho)
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+Gemfile.lock

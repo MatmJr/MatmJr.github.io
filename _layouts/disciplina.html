@@ -1,0 +1,56 @@
+---
+layout: base
+---
+{%- comment %}
+  Página da disciplina = index.md da pasta (aulas/<semestre>/<disciplina>/index.md).
+  A lista de aulas é montada com os outros .md da mesma pasta, na ordem do nome do arquivo.
+{% endcomment %}
+{%- assign pasta = page.path | remove: page.name %}
+{%- assign aulas = site.pages | where_exp: "p", "p.layout == 'aula'" | where_exp: "p", "p.path contains pasta" | sort: "path" %}
+
+    <section class="aula-topo">
+      <div class="container">
+        <nav class="trilha" aria-label="Trilha">
+          <a href="{{ '/aulas/' | relative_url }}">Aulas</a>
+          <span aria-hidden="true">/</span> <span>{{ page.semestre }}</span>
+        </nav>
+
+        <span class="eyebrow">{{ page.semestre }}{% if page.instituicao %} · {{ page.instituicao }}{% endif %}</span>
+        <h1 class="aula-titulo">{{ page.title }}</h1>
+        {%- if page.descricao %}
+        <p class="aula-lede">{{ page.descricao }}</p>
+        {%- endif %}
+      </div>
+    </section>
+
+    <div class="container">
+      <section class="disciplina-aulas" aria-labelledby="titulo-aulas">
+        <h2 id="titulo-aulas" class="section-title">Aulas</h2>
+        {%- if aulas.size > 0 %}
+        <ol class="lista-aulas">
+          {%- for a in aulas %}
+          {%- if a.numero %}{% assign n = a.numero %}{% else %}{% assign n = forloop.index %}{% endif %}
+          <li>
+            <a href="{{ a.url | relative_url }}">
+              <span class="lista-aulas-num">{% if n < 10 %}0{% endif %}{{ n }}</span>
+              <span class="lista-aulas-texto">
+                <strong>{{ a.title }}</strong>
+                {%- if a.resumo %}<small>{{ a.resumo }}</small>{% endif %}
+              </span>
+              {%- if a.date %}<time datetime="{{ a.date | date: '%Y-%m-%d' }}">{{ a.date | date: "%d/%m" }}</time>{% endif %}
+            </a>
+          </li>
+          {%- endfor %}
+        </ol>
+        {%- else %}
+        <p class="lista-vazia">Nenhuma aula publicada ainda.</p>
+        {%- endif %}
+      </section>
+
+      {%- assign sobre = content | strip %}
+      {%- if sobre != "" %}
+      <article class="prosa disciplina-sobre">
+{{ content }}
+      </article>
+      {%- endif %}
+    </div>

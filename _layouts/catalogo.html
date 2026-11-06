@@ -1,0 +1,50 @@
+---
+layout: base
+---
+{%- comment %}
+  Catálogo das aulas: toda página com layout "disciplina", agrupada por semestre (o mais recente primeiro).
+{% endcomment %}
+{%- assign semestres = site.pages | where: "layout", "disciplina" | group_by: "semestre" | sort: "name" | reverse %}
+
+    <section class="aula-topo">
+      <div class="container">
+        <span class="eyebrow">{{ page.title }}</span>
+        <h1 class="aula-titulo">{{ page.titulo | default: page.title }}</h1>
+        {%- if page.descricao %}
+        <p class="aula-lede">{{ page.descricao }}</p>
+        {%- endif %}
+      </div>
+    </section>
+
+    <div class="container catalogo">
+      {%- assign intro = content | strip %}
+      {%- if intro != "" %}
+      <div class="prosa">
+{{ content }}
+      </div>
+      {%- endif %}
+
+      {%- for s in semestres %}
+      <section class="catalogo-semestre" aria-labelledby="semestre-{{ s.name }}">
+        <h2 id="semestre-{{ s.name }}" class="catalogo-semestre-titulo">{{ s.name }}</h2>
+        <div class="catalogo-grade">
+          {%- assign disciplinas = s.items | sort: "title" %}
+          {%- for d in disciplinas %}
+          {%- assign pasta = d.path | remove: d.name %}
+          {%- assign aulas = site.pages | where_exp: "p", "p.layout == 'aula'" | where_exp: "p", "p.path contains pasta" %}
+          <a class="disciplina-card" href="{{ d.url | relative_url }}">
+            {%- if d.instituicao %}<span class="study-meta">{{ d.instituicao }}</span>{% endif %}
+            <h3>{{ d.title }}</h3>
+            {%- if d.descricao %}<p>{{ d.descricao }}</p>{% endif %}
+            <span class="disciplina-card-rodape">
+              {% if aulas.size == 1 %}1 aula{% else %}{{ aulas.size }} aulas{% endif %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+          {%- endfor %}
+        </div>
+      </section>
+      {%- else %}
+      <p class="lista-vazia">Nenhuma disciplina publicada ainda.</p>
+      {%- endfor %}
+    </div>

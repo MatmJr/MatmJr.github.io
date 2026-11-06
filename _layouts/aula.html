@@ -1,0 +1,80 @@
+---
+layout: base
+---
+{%- comment %}
+  Uma aula = um .md na pasta da disciplina (aulas/<semestre>/<disciplina>/aula-01-tema.md).
+  A disciplina vem do index.md da mesma pasta; a ordem das aulas, do nome do arquivo.
+{% endcomment %}
+{%- assign pasta = page.path | remove: page.name %}
+{%- assign indice = pasta | append: "index.md" %}
+{%- assign disciplina = site.pages | where: "path", indice | first %}
+{%- assign aulas = site.pages | where_exp: "p", "p.layout == 'aula'" | where_exp: "p", "p.path contains pasta" | sort: "path" %}
+{%- for a in aulas %}{% if a.path == page.path %}{% assign i = forloop.index0 %}{% endif %}{% endfor %}
+{%- if page.numero %}{% assign numero = page.numero %}{% else %}{% assign numero = i | plus: 1 %}{% endif %}
+{%- assign i_anterior = i | minus: 1 %}
+{%- assign i_proxima = i | plus: 1 %}
+{%- assign pasta_url = page.dir | remove_first: "/" %}
+{%- comment %} slides e materiais: arquivo na pasta da aula ou link externo (https://...) {% endcomment %}
+{%- if page.slides contains '://' %}{% assign slides_url = page.slides %}{% else %}{% assign slides_url = page.dir | append: page.slides | relative_url %}{% endif %}
+
+    <section class="aula-topo">
+      <div class="container">
+        <nav class="trilha" aria-label="Trilha">
+          <a href="{{ '/aulas/' | relative_url }}">Aulas</a>
+          {%- if disciplina %}
+          <span aria-hidden="true">/</span> <span>{{ disciplina.semestre }}</span>
+          <span aria-hidden="true">/</span> <a href="{{ disciplina.url | relative_url }}">{{ disciplina.title }}</a>
+          {%- endif %}
+        </nav>
+
+        <span class="eyebrow">Aula {{ numero }}{% if page.date %} · {{ page.date | date: "%d/%m/%Y" }}{% endif %}</span>
+        <h1 class="aula-titulo">{{ page.title }}</h1>
+        {%- if page.resumo %}
+        <p class="aula-lede">{{ page.resumo }}</p>
+        {%- endif %}
+
+        {%- if page.slides or page.notebook or page.materiais %}
+        <div class="aula-acoes">
+          {%- if page.slides %}
+          <a class="btn btn-primary" href="{{ slides_url }}" target="_blank" rel="noopener">
+            Slides
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>
+          </a>
+          {%- endif %}
+          {%- if page.notebook %}
+          <a class="btn btn-outline" href="https://colab.research.google.com/github/{{ site.repositorio }}/blob/{{ site.branch }}/{{ pasta_url }}{{ page.notebook }}" target="_blank" rel="noopener">
+            Abrir no Colab
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+          <a class="btn btn-outline" href="{{ page.dir | append: page.notebook | relative_url }}" download>
+            Baixar notebook
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          </a>
+          {%- endif %}
+          {%- for m in page.materiais %}
+          {%- if m.url contains '://' %}{% assign m_url = m.url %}{% else %}{% assign m_url = page.dir | append: m.url | relative_url %}{% endif %}
+          <a class="btn btn-outline" href="{{ m_url }}" target="_blank" rel="noopener">{{ m.nome }}</a>
+          {%- endfor %}
+        </div>
+        {%- endif %}
+      </div>
+    </section>
+
+    <div class="container">
+      <article class="prosa">
+{{ content }}
+      </article>
+
+      {%- if aulas.size > 1 %}
+      <nav class="aula-nav" aria-label="Outras aulas">
+        {%- if i > 0 %}
+        {%- assign anterior = aulas[i_anterior] %}
+        <a class="aula-nav-anterior" href="{{ anterior.url | relative_url }}"><small>← Aula anterior</small>{{ anterior.title }}</a>
+        {%- else %}<span></span>{% endif %}
+        {%- if i_proxima < aulas.size %}
+        {%- assign proxima = aulas[i_proxima] %}
+        <a class="aula-nav-proxima" href="{{ proxima.url | relative_url }}"><small>Próxima aula →</small>{{ proxima.title }}</a>
+        {%- endif %}
+      </nav>
+      {%- endif %}
+    </div>

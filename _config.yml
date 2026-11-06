@@ -1,0 +1,33 @@
+# Jekyll: só processa arquivos que começam com o cabeçalho "---".
+# index.html, pt.html, studies/ e assets/ não têm cabeçalho e são publicados como estão.
+title: Marco Mialaret Júnior
+lang: pt-BR
+url: https://matmjr.github.io
+baseurl: ""
+
+# sem tema: o padrão do GitHub Pages (Primer) gera um assets/css/style.css que
+# sobrescreve o do site; os layouts e o CSS são todos daqui
+theme: null
+
+# usado no link "Abrir no Colab" das aulas
+repositorio: MatmJr/MatmJr.github.io
+branch: main
+
+markdown: kramdown
+kramdown:
+  math_engine: mathjax   # $$...$$ vira \( \) ou \[ \], que o KaTeX desenha no navegador
+highlighter: rouge
+
+# cada arquivo .md dentro de aulas/ é uma aula, a não ser que diga outro layout
+defaults:
+  - scope:
+      path: "aulas"
+    values:
+      layout: aula
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - studies/fonte
+  - vendor
